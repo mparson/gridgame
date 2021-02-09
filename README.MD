@@ -1,5 +1,4 @@
-![gridgame][gridgame]
-[gridgame]:gridgame.png
+![gridgame](gridgame.png)
 
 # GridGame
 
