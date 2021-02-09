@@ -1,21 +1,21 @@
 /*
- * The code for this game is Copyright ©2021, Michael Parson
- * <mparson@bl.org>.
- *
- * This game is free software; you can redistribute it and/or
- * modify it however you see fit. All I ask is that you give 
- * credit back to myself and anyone else that has contributed
- * to the game.
- *
- * This game is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty
- * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *
- * Michael Parson can not be held responsible for any wasted time, 
- * ills, wars, fires, or other Bad Things™ that occur before, during,
- * or after aquisition of this software.
- *
- * Play at your own risk, no lifeguard on duty.
+ The code for this game is Copyright ©2021, Michael Parson
+ <mparson@bl.org>.
+
+ This game is free software; you can redistribute it and/or modify it
+ however you see fit. All I ask is that you give credit back to myself
+ and anyone else that has contributed to the game.
+
+ This game is distributed in the hope that it will be at least mildly
+ entertaining, but WITHOUT ANY WARRANTY; without even the implied
+ warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+ Michael Parson can not be held responsible for any lost data, wasted
+ time, lost friendships, ills, wars, fires, or other Bad Things™ that
+ may or may not occur before, during, or after aquisition of this
+ software.
+
+ Play at your own risk, no lifeguard on duty.
  */
  
 #include <conio.h>
