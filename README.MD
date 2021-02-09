@@ -2,6 +2,8 @@
 
 # GridGame
 
+A game for the (Commander X-16)[https://www.commanderx16.com).
+
 A 'C' implementation of a Flash game I used to play a lot of back in the days of Flash games.
 
 Unfortunately, I don't know the original author's name, the closest I can find is a URL pointing to a now dead page: 
@@ -41,6 +43,7 @@ Yeah, very intentional bad spelling there.  I make no claims to my skills as a C
 
 ## Potential features for future versions:
 
+* Versions for the C-64 & C-128
 * Sound - I'll need to read up on how to make cc65 generate sounds.  It's documented, but I've not tried that yet.  Step 1 was to get the basic game working.
 * High Score saving - why not?
 * Board Edit Mode - Add a mode where you can click around and rotate individual pieces w/o triggering the gameplay, let you set up custom boards to see how the patterns play out.  This will also give you the ability to save/load the custom boards.
