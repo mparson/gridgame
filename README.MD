@@ -2,7 +2,7 @@
 
 # GridGame
 
-A game for the (Commander X-16)[https://www.commanderx16.com].
+A game for the [Commander X-16](https://www.commanderx16.com).
 
 A 'C' implementation of a Flash game I used to play a lot of back in the days of Flash games.
 
