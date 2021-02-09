@@ -9,12 +9,12 @@ Unfortunately, I don't know the original author's name, the closest I can find i
 
 http://www.columbia.edu/~chc18/gridgame.swf
 
-If *chc18* was the original author, and if anyone knows *chc18*, or whomever the original author of the SWF version was, and can get us in contact with each other, I'll gladly give further credit to them for their insipiration/original work.
+If *chc18* was the original author, and if anyone knows *chc18*, or whomever the original author of the SWF version was, and can get us in contact with each other, I'll gladly give further credit to them for their inspiration/original work.
 
 I'd say this game is ~95% faithful to that original game.  Some of the limitations 
 are due to my use of the so-called [PETSCII](https://en.wikipedia.org/wiki/PETSCII) character set for the graphics instead of custom graphics, which means there is no smooth animation of the pieces as they are activated.  I've also not included any sounds, but that might come in a future version.
 
-This is orignal code that implements the gameplay, I did not port the embeded ActionScript of the original SWF game.
+This is original code that implements the gameplay, I did not port the embedded ActionScript of the original SWF game.
 
 ## Why?
 
@@ -38,7 +38,7 @@ It should be a minimal effort to make a C-64 and C-128 version as well, probably
 
 ## Notes on the kwalitee of my code
 
-Yeah, very intentional bad spelling there.  I make no claims to my skills as a C programmer.  This is probably not "good" C code and most definitely not optimized in the suggested ways you should when writting for `cc65` compiler and the 6502 CPU.
+Yeah, very intentional bad spelling there.  I make no claims to my skills as a C programmer.  This is probably not "good" C code and most definitely not optimized in the suggested ways you should when writing for `cc65` compiler and the 6502 CPU.
 
 ## Potential features for future versions:
 
