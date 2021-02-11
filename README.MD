@@ -76,7 +76,7 @@ for `cc65` compiler and the 6502 CPU.
 
 ## Changelog:
 
-v0.6 - High Scores are saved across runs of the game.
+v0.6 - High Scores are saved across runs of the game.  
 v0.5 - Initial release of playable game.
 
 ## Potential features for future versions:
