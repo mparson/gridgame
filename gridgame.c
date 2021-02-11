@@ -21,6 +21,8 @@
 #include <conio.h>
 #include <stdlib.h>
 #include <mouse.h>
+#include <string.h>
+#include <stdbool.h>
 
 #define LX  12	// low 'x' val (left side of playfield)
 #define HX  27	// high 'x' val (right side of playfield)
@@ -31,8 +33,12 @@
 #define WHITE 97
 #define RED   98
 
+static char rbuf[255];
+static char wbuf[255];
+unsigned int hscore;
+bool nhs = false;
+
 unsigned int score = 0;
-unsigned int hscore = 0;
 
 unsigned char grid[4][8] = {
 	{ 117,96,105,160,160,160,160,98 },
@@ -103,10 +109,6 @@ void Enqueue(Queue *Q,unsigned char ex, unsigned char ey) {
 		Q->rear++;
 		// Should probably just make the Q bigger, this makes the Q circular
 		if (Q->rear == Q->capacity) {
-			gotoxy(29,19);
-			cprintf("queue rolled");
-			//cgetc();
-			cclearxy(29,19,12);
 			Q->rear = 0;
 		}
 
@@ -118,6 +120,7 @@ void Enqueue(Queue *Q,unsigned char ex, unsigned char ey) {
 
 void updatescore() {
 	if (score >= hscore) {
+		nhs = true;
 		hscore = score;
 	}
 	if (hscore) {
@@ -127,6 +130,30 @@ void updatescore() {
 	
 	gotoxy(2,6);
 	cprintf("%6d",score);
+}
+
+void loadhs() {
+	cbm_open(2,8,2,"highscore,s");
+	cbm_read(2,rbuf,6);
+	cbm_close(2);
+	hscore = atoi(rbuf);
+}
+
+void savehs() {
+	//unsigned char retval;
+	
+	if (nhs == true) {
+		cbm_open(2,8,15,"s0:highscore,s");
+		cbm_close(2);
+
+		cbm_open(2,8,2,"highscore,s,w");
+		
+		itoa(hscore,wbuf,10);
+		cbm_write(2,wbuf,strlen(wbuf));
+		cbm_close(2);
+
+		nhs = false;
+	}
 }
 
 void check (Queue *Q, unsigned char cx, unsigned char cy, unsigned char dir) {
@@ -183,14 +210,6 @@ void check (Queue *Q, unsigned char cx, unsigned char cy, unsigned char dir) {
 		cputc(c);
 		textcolor(WHITE);
 		
-/*
-		// DEBUG
-		cclearxy(62,HY-1,12);
-		gotoxy(62,HY-1);
-		cprintf("adding %d,%d to q",cx,cy);
-		// END DEBUG
-*/
-
 		Enqueue(Q,cx,cy);
 		++score;
 		updatescore();
@@ -210,12 +229,6 @@ void processQ(Queue *Q) {
 		gotoxy(mx,my);
 		
 		c = cpeekc();
-
-/*
-		// DEBUG
-		gotoxy(62,35);
-		cprintf("c = %d",c);
-*/
 
 		switch (c) {
 			case 105:
@@ -240,28 +253,6 @@ void processQ(Queue *Q) {
 				break;
 		}
 
-/*
-		// DEBUG
-		if (mx < LX || my < LY || nc == 0) {
-			gotoxy(62,HY-5);
-			cprintf("broke with %c",nc);
-			gotoxy(62,HY-4);
-			cprintf("%d,%d,%d",mx,my,nc);
-			cgetc();
-			exit(1);
-		}
-		
-		if (mx > HX || my > HY || nc == 0) {
-			gotoxy(62,HY-3);
-			cprintf("out of range");
-			gotoxy(62,HY-3);
-			cprintf("%d,%d,%d",mx,my,nc);
-			cgetc();
-			exit(1);
-		}	
-		// END DEBUG
-*/
-
 		textcolor(WHITE);
 		cputcxy(mx,my,nc);
 
@@ -270,17 +261,6 @@ void processQ(Queue *Q) {
 		}
 
 		Deqeue(Q);
-		
-/*		
-		// DEBUG
-		cclearxy(65,HY-7,3);
-		cclearxy(65,HY-6,3);
-		gotoxy(63,HY-7);
-		cprintf("q: %03d",Q->size);
-		gotoxy(62,HY-6);
-		cprintf("mq: %03d",mq);
-		// END DEBUG
-*/
 
 		for (c = 0;  c <= 1; ++c) {
 			waitvsync();
@@ -365,12 +345,10 @@ void newboard() {
 	cputsxy(31,6,"BresetB");
 	cputsxy(31,7,"JCCCCCK");
 	
-	cputsxy(11,18,"try to get a chain");
-	cputsxy(11,19,"reaction as long");
-	cputsxy(11,20,"as possible. edges");
-	cputsxy(11,21,"touching trigger");
-	cputsxy(11,22,"rotation. click");
-	cputsxy(11,23,"on a piece to start");
+	cputsxy(8,18,"click on a piece to start.");
+	cputsxy(8,19,"try to get the chain reaction");
+	cputsxy(8,20,"going as long as possible.");
+	cputsxy(8,21,"edges touching trigger rotation.");
 }
 
 int main() {
@@ -393,6 +371,8 @@ int main() {
 	mouse_install(&mouse_def_callbacks,mouse_static_stddrv);
 	mouse_show();
 
+	loadhs();
+	
 	newboard();
 	
 	while (1) {
@@ -424,6 +404,7 @@ int main() {
 				}
 			}
 		}
+		savehs();
 	}
 	return 0;
 }
