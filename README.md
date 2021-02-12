@@ -7,15 +7,8 @@ A game for the [Commander X-16](https://www.commanderx16.com).
 A 'C' implementation of a Flash game I used to play a lot of back in the
 days of Flash games.
 
-Unfortunately, I don't know the original author's name, the closest I
-can find is a URL pointing to a now dead page:
-
-http://www.columbia.edu/~chc18/gridgame.swf
-
-If *chc18* was the original author, and if anyone knows *chc18*, or
-whomever the original author of the SWF version was, and can get us in
-contact with each other, I'll gladly give further credit to them for
-their inspiration/original work.
+A [short writeup](https://jayisgames.com/review/gridgame.php) about the
+original SWF version of the game this is based on.
 
 I'd say this game is ~95% faithful to that original game.
 Some of the limitations are due to my use of the so-called
