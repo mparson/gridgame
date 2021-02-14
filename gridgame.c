@@ -268,7 +268,7 @@ void updatescore () {
 		nhs = true;
 		hscore = score;
 	}
-	if (hscore) {
+	if (hscore || nhs == true) {
 		gotoxy (2,10);
 		cprintf ("%6d",hscore);
 	}
@@ -287,6 +287,7 @@ void savehs () {
 	if (editmode) {
 		nhs = true;
 		hscore = 0;
+		updatescore ();
 	}
 	
 	if (nhs == true) {
@@ -484,7 +485,6 @@ void check (Queue *Q, unsigned char cx, unsigned char cy, unsigned char dir) {
 			exit (1);
 	}
 	
-
 	// check to see if we're already marked to rotate
 	gotoxy (cx,cy);
 	cc = cpeekcolor ();
@@ -619,6 +619,9 @@ void mbutton (unsigned char mx, unsigned char my) {
 		}
 		if ((mx >= 31 && mx <= 37) && (my >= 14 && my <= 17)) {
 			saveboard ();
+		}
+		if ((mx >= 1 && mx <= 7) && (my >=11 && my <= 13)) {
+			savehs ();
 		}
 		if ((mx >= 12 && mx <= 27) && (my == 0 || my == 17)) {
 			// mark column same as top/bottom cell
