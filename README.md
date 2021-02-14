@@ -34,7 +34,7 @@ New feature in v0.9.
 
 Click on the 'EDIT' button and you can edit the board.  
 
-Congratulation, you are now in the most frustrating and feature limited
+Congratulations, you are now in the most frustrating and feature limited
 PETSCII drawing program ever.
 
 The boarder changes to '\*' from the line-drawing characters.  You can
