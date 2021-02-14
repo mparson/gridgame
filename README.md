@@ -20,6 +20,35 @@ any sounds, but that might come in a future version.
 This is original code that implements the game play, I did not port the
 embedded ActionScript of the original SWF game.
 
+## Gameplay:
+
+Mostly just like the original, click on a piece to make it rotate,
+if one of its two edges touches the edges of another piece, that
+piece rotates, etc.  The goal is to trigger a long chain reaction of
+rotations.
+
+## Board editing, saving, and loading
+![gridedit](gridedit.png)
+
+New feature in v0.9.
+
+Click on the 'EDIT' button and you can edit the board.  
+
+Congratulation, you are now in the most frustrating and feature limited
+PETSCII drawing program ever.
+
+The boarder changes to '\*' from the line-drawing characters.  You can
+now click on a piece to rotate it without triggering a chain reaction.
+If you click on one of the '\*' on the boarder, it will change the
+entire row or column to match the adjacent piece.
+
+When you 'SAVE' a board, it will *not* check for a previous file,
+it will silently overwrite it.  Similarly, attempting to 'LOAD' a
+non-existent board will silently not load a board and return you to the
+editor.
+
+Click on 'DONE' to play the board.
+
 ## Why?
 
 Why write this game?  
@@ -69,6 +98,12 @@ for `cc65` compiler and the 6502 CPU.
 
 ## Changelog:
 
+v0.9 - New features:  
+ - Board editing, loading, and saving.  
+Bugs fixed:  
+ - Clicking outside the playfield would reset score to '0'  
+ - Score was incrementing *after* the screen score was updated.
+ 
 v0.6 - High Scores are saved across runs of the game.  
 v0.5 - Initial release of playable game.
 
@@ -78,9 +113,5 @@ v0.5 - Initial release of playable game.
 * Sound - I'll need to read up on how to make cc65 generate sounds.
   It's documented, but I've not tried that yet.  Step 1 was to get the
   basic game working.
-* Board Edit Mode - Add a mode where you can click around and rotate
-  individual pieces w/o triggering the game play, let you set up custom
-  boards to see how the patterns play out.  This will also give you the
-  ability to save/load the custom boards.
 * See if it will compile with [KickC](https://gitlab.com/camelot/kickc),
   then all dev work could even be done on the system it is played on!
