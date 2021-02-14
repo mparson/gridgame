@@ -30,6 +30,11 @@ rotations.
 ## Board editing, saving, and loading
 ![gridedit](gridedit.png)
 
+New feature in v0.9.1
+
+The 'RESET' button on the HIGH SCORE now resets the HIGH SCORE to
+'0'.
+
 New feature in v0.9.
 
 Click on the 'EDIT' button and you can edit the board.  
@@ -98,13 +103,17 @@ for `cc65` compiler and the 6502 CPU.
 
 ## Changelog:
 
-v0.9 - New features:  
+v0.9.1 - Bug fix
+ - 'RESET' button under the HIGH SCORE now resets the high score to '0'  
+
+v0.9 - New features:
  - Board editing, loading, and saving.  
-Bugs fixed:  
+Bugs fixed: 
  - Clicking outside the playfield would reset score to '0'  
  - Score was incrementing *after* the screen score was updated.
  
 v0.6 - High Scores are saved across runs of the game.  
+
 v0.5 - Initial release of playable game.
 
 ## Potential features for future versions:
