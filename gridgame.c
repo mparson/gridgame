@@ -12,12 +12,13 @@
 
  Michael Parson can not be held responsible for any lost data, wasted
  time, lost friendships, ills, wars, fires, or other Bad Things™ that
- may or may not occur before, during, or after aquisition of this
+ may or may not occur before, during, or after acquisition of this
  software.
 
  Play at your own risk, no lifeguard on duty.
  */
- 
+
+#include <stdio.h>
 #include <conio.h>
 #include <stdlib.h>
 #include <mouse.h>
@@ -33,12 +34,18 @@
 #define WHITE 97
 #define RED   98
 
-static char rbuf[255];
-static char wbuf[255];
+unsigned char filename[16];
+unsigned char tmpname[20];
+static char fbuf[256];
+static char board[16][16];
+unsigned int score;
 unsigned int hscore;
-bool nhs = false;
+bool overwrite;
+bool nhs;
+bool editmode;
+bool sb;
 
-unsigned int score = 0;
+bool redrawboard = 1;
 
 unsigned char grid[4][8] = {
 	{ 117,96,105,160,160,160,160,98 },
@@ -70,12 +77,12 @@ typedef struct Queue {
 	unsigned char *qy;
 }Queue;
 
-Queue * createQueue(unsigned int maxElements) {
+Queue * createQueue (unsigned int maxElements) {
 	Queue *Q;
-	Q = (Queue *)malloc(sizeof(Queue));
+	Q = (Queue *)malloc (sizeof (Queue));
 
-	Q->qx = (unsigned char *)malloc(sizeof(unsigned char)*maxElements);
-	Q->qy = (unsigned char *)malloc(sizeof(unsigned char)*maxElements);
+	Q->qx = (unsigned char *)malloc (sizeof (unsigned char)*maxElements);
+	Q->qy = (unsigned char *)malloc (sizeof (unsigned char)*maxElements);
 	Q->size = 0;
 	Q->capacity = maxElements;
 	Q->front = 0;
@@ -84,29 +91,28 @@ Queue * createQueue(unsigned int maxElements) {
 	return Q;
 }
 
-unsigned int Deqeue(Queue *Q){
+void Deqeue (Queue *Q){
 	if (Q->size == 0) {
-		return 0;
+		return;
 	} else {
-		Q->size--;
-		Q->front++;
+		--Q->size;
+		++Q->front;
 		if (Q->front == Q->capacity) {
 			Q->front=0;
 		}
 	}
-	return (unsigned int) Q->size;
 }
 
-void Enqueue(Queue *Q,unsigned char ex, unsigned char ey) {
+void Enqueue (Queue *Q,unsigned char ex, unsigned char ey) {
 	// if the queue is full, we cannot push an element into it as there is no space for it
 	if (Q->size == Q->capacity) {
-		gotoxy(29,18);
-		cprintf("queue is full");
-		cgetc();
-		exit(1);
+		gotoxy (29,18);
+		cprintf ("queue is full");
+		cgetc ();
+		exit (1);
 	} else {
-		Q->size++;
-		Q->rear++;
+		++Q->size;
+		++Q->rear;
 		// Should probably just make the Q bigger, this makes the Q circular
 		if (Q->rear == Q->capacity) {
 			Q->rear = 0;
@@ -118,46 +124,330 @@ void Enqueue(Queue *Q,unsigned char ex, unsigned char ey) {
 	return;
 }
 
-void updatescore() {
+void cboxclear (unsigned char tx,unsigned char ty,unsigned char bx,unsigned char by) {
+	unsigned char bw,bh;
+	unsigned char y;
+
+	bw = (bx - tx) + 1;
+	bh = (by - ty) + 1;
+	
+	for (y = ty; y <= by; ++y) {
+		cclearxy (tx,y,bw);
+	}
+}
+
+void cbox (unsigned char tx,unsigned char ty,unsigned char bx,unsigned char by) {
+	unsigned char bw,bh;
+	unsigned char hlc,vlc; // horizontal/vertical line drawing char
+	unsigned char x;
+	
+	bw = (bx - tx) - 1;
+	bh = (by - ty) - 1;
+	
+	if (editmode) {
+		hlc = 42;  // '*'
+		vlc = hlc;
+	} else {
+		hlc = 96;  // shifted 'C'
+		vlc = 98;  // shifted 'B'
+	}
+	
+	cputcxy (tx,ty,117);   // TL corner
+	cputcxy (bx,ty,105);   // TR corner
+	cputcxy (bx,by,107);   // BR corner
+	cputcxy (tx,by,106);   // BL corner
+	
+	for (x = 1; x <= bw; ++x) {
+		cputcxy (tx+x,ty,hlc);
+		cputcxy (tx+x,by,hlc);
+	}
+	
+	for (x = 1; x <= bh; ++x) {
+		cputcxy (tx,ty+x,vlc);
+		cputcxy (bx,ty+x,vlc);
+	}
+}
+
+void drawbutton (char bx, char by, char btext[]) {
+	unsigned char bl = strlen (btext);
+	bool em = editmode; // save the editmode
+
+	editmode = 0; // we want real line draw chars, not '*'
+	
+	cbox (bx,by,bx+bl+1,by+2);
+	cputsxy (bx+1,by+1,btext);
+	
+	editmode = em; // back to whatever it was before
+}
+
+void printboard () {
+	unsigned char x,y;
+
+	clrscr ();
+	gotoxy (0,0);
+	
+	for (y = 0; y <= 15; ++y) {
+		for (x = 0; x <= 15; ++x) {
+			cprintf ("%c",board[x][y]);
+		}
+		cprintf ("\r\n");
+	}
+	cgetc ();
+}
+
+// TODO: handle non-existing file for board loading
+void loadfile (unsigned char filename[], unsigned char fsize) {
+	unsigned char y;
+	
+	if (overwrite == 1) {
+		strcpy (tmpname,filename);
+		strcat (tmpname,",s,r");
+
+		cbm_open (2,8,2,tmpname);
+		
+		if (sb) {
+			for (y = 0; y <= 15; ++y) {
+				fbuf[0] = '\0';
+				gotoxy (LX,LY + y);
+				cbm_read (2,fbuf,16); // only read 16 chars
+				cprintf ("%s",fbuf);
+			}
+			sb = 0;
+		} else { 
+			cbm_read (2,fbuf,fsize);
+			cbm_close (2);
+		}
+	}
+}
+
+void append (char* s,char c) {
+	unsigned char len;
+
+	len = strlen(s);
+	
+	s[len] = c;
+	s[len + 1] = '\0';
+}
+
+// TODO: handle existing file for board saving
+void savefile (unsigned char filename[], unsigned int fsize) {
+	unsigned char x,y;
+	
+	if (overwrite == 1) {
+		strcpy (tmpname,"s0:");
+		strcat (tmpname,filename);
+		strcat (tmpname,",s");
+		
+		cbm_open (2,8,15,tmpname);
+		cbm_close (2);
+	}
+
+	strcpy (tmpname,filename);
+	strcat (tmpname,",s,w");
+	cbm_open (2,8,2,tmpname);
+	
+	if (sb) {
+		for (y = 0; y <= 15; ++y) {
+			fbuf[0] = '\0';
+			for (x = 0; x <= 15; ++x) {
+				append (fbuf,board[x][y]);
+			}
+			// cprintf ("%s\r\n",fbuf);
+			cbm_write (2,fbuf,16); // only write 16 chars
+		}
+		sb = 0;
+	} else {
+		cbm_write (2,fbuf,fsize);
+	}
+
+	cbm_close (2);
+}
+
+void updatescore () {
 	if (score >= hscore) {
 		nhs = true;
 		hscore = score;
 	}
 	if (hscore) {
-		gotoxy(2,10);
-		cprintf("%6d",hscore);
+		gotoxy (2,10);
+		cprintf ("%6d",hscore);
 	}
 	
-	gotoxy(2,6);
-	cprintf("%6d",score);
+	gotoxy (2,6);
+	cprintf ("%6d",score);
 }
 
-void loadhs() {
-	cbm_open(2,8,2,"highscore,s");
-	cbm_read(2,rbuf,6);
-	cbm_close(2);
-	hscore = atoi(rbuf);
+void loadhs () {
+	overwrite = 1;
+	loadfile ("highscore",6);  // highscores are max 6 chars long.
+	hscore = atoi (fbuf);
 }
 
-void savehs() {
-	//unsigned char retval;
+void savehs () {
+	if (editmode) {
+		nhs = true;
+		hscore = 0;
+	}
 	
 	if (nhs == true) {
-		cbm_open(2,8,15,"s0:highscore,s");
-		cbm_close(2);
-
-		cbm_open(2,8,2,"highscore,s,w");
-		
-		itoa(hscore,wbuf,10);
-		cbm_write(2,wbuf,strlen(wbuf));
-		cbm_close(2);
-
+		overwrite = 1;
+		gotoxy (0,24);
+		itoa (hscore,fbuf,10);
+		gotoxy (0,24);
+		savefile ("highscore",strlen (fbuf));
 		nhs = false;
 	}
 }
 
+void updateboard () {
+	unsigned char row,rows,cols,x;
+	unsigned char cpart;
+
+	// print the "Grid" text
+	row = 0;
+	gotoxy (2,row);
+	for (rows = 0; rows < 4; ++rows) {
+		for (cols = 0; cols < 8; ++cols) {
+			cprintf ("%c",grid[rows][cols]);
+		}
+		row++;
+		gotoxy (2,row);
+	}
+
+	// print the "game" text
+	row = 0;
+	gotoxy (29,row);
+	for (rows = 0; rows < 4; ++rows) {
+		for (cols = 0; cols < 9; ++cols) {
+			cprintf ("%c",game[rows][cols]);
+		}
+		row++;
+		gotoxy (29,row);
+	}
+
+	cbox (LX-1,LY-1,HX+1,HY+1);
+
+	if (redrawboard !=0) {
+		for (rows = LY; rows <= HY ; ++rows) {
+			for (cols = LX; cols <= HX ; ++cols) {
+				x = (rand () % 4);
+				switch (x) {
+					case 0:
+						cpart = 105;
+						break;
+					case 1:
+						cpart = 106;
+						break;
+					case 2:
+						cpart = 107;
+						break;
+					case 3:
+						cpart = 117;
+						break;
+				}
+				cputcxy (cols,rows,cpart);
+			}
+		}
+	}
+	
+	cputsxy (2,5,"score:");
+	cputsxy (2,8,"high");
+	cputsxy (2,9,"score:");
+	
+	updatescore ();
+	
+	if (editmode) {
+		cboxclear (31,5,37,7);      // erase 'reset' button
+		cboxclear (0,18,39,24);     // erase the bottom of screen
+		drawbutton (31,8," done");  // want 'reset' and 'done' buttons to be same size
+		drawbutton (31,11," load"); // load new board
+		drawbutton (31,14," save"); // save board to disk
+		drawbutton (1,11,"reset");  // high score reset button
+		gotoxy(0,19);
+		cprintf("click on a piece to rotate it\r\n");
+		cprintf("clicking on an '*' on the border will\r\n");
+		cprintf("change the whole row or column to match\r\n");
+		cprintf("the adjacent piece.");
+	} else {
+		drawbutton (31,5,"reset");  // generate new random board
+		drawbutton (31,8," edit");  // edit board
+		cboxclear (31,11,37,16);    // remove the load/save buttons above 
+		cboxclear (1,11,7,13);      // remove the 'reset' button under the high score
+
+		cboxclear (0,18,39,24);     // erase the bottom of screen
+		gotoxy (0,19);
+		cprintf("the objective of the game is to get a\r\n");
+		cprintf("chain reaction of tiles as long as\r\n"); 
+		cprintf("possible.tiles will start each other if\r\n");
+		cprintf("their lines are connected.\r\n");
+		cprintf("click on a tile to start.");
+	}
+}
+
+void loadboard () {
+	unsigned char c;
+	
+	cursor (1);
+	cboxclear (0,18,39,24); // clear the bottom of the screen}
+	cputsxy (0,18,"filename? ");
+	scanf ("%s",&filename);
+	
+	gotoxy (0,19);
+	cprintf ("loading board: %s",filename);
+	overwrite = 1;          // force attempting to load (TODO: why?)
+	sb = 1;
+	loadfile (filename,1);   // board loading does it's own file sizing
+	cclearxy (0,21,40);      // clear 'load...' text.
+
+	gotoxy (0,21);
+	cprintf ("board %s loaded\r\n",filename);
+	// wait for 2 seconds
+	for (c = 0; c <= 120 ; ++c) { 
+		waitvsync ();
+	}
+	cboxclear (0,18,39,24); // clear the bottom of the screen}
+	cursor (0);
+	updateboard ();
+}
+
+void saveboard () {
+	unsigned char x,y;
+	unsigned char c;
+
+	cursor (1);
+	cputsxy (0,18,"filename? ");
+	scanf ("%s",&filename);
+	
+	for (y = 0; y <= 15; ++y) {
+		for (x = 0; x <= 15; ++x) {
+			gotoxy (x + LX,y + LY);
+			board[x][y] = cpeekc ();
+		}
+	}
+	
+	gotoxy (0,19);
+	cprintf ("saving board: %s",filename);
+	overwrite = 1; // force attempting to save
+	sb = 1; // so savefile () knows to do the board handling
+	savefile (filename,1);
+	cclearxy (0,21,40); // clear 'saving...' text.
+	gotoxy (0,21);
+	cprintf ("board %s saved\r\n",filename);
+	// wait for 2 seconds
+	for (c = 0; c <= 120 ; ++c) { 
+		waitvsync ();
+	}
+	cboxclear (0,18,39,24); // clear the bottom of the screen
+	cursor (0);
+	updateboard ();
+}
+
 void check (Queue *Q, unsigned char cx, unsigned char cy, unsigned char dir) {
 	unsigned char c,cc;
+
+	if (editmode) {
+		return;
+	}
 	
 	switch (dir) {
 		case 0:                    // left
@@ -189,46 +479,44 @@ void check (Queue *Q, unsigned char cx, unsigned char cy, unsigned char dir) {
 				return;
 			}
 		default:
-			gotoxy(29,24);
+			gotoxy (29,24);
 			cprintf ("what?!");
-			exit(1);
+			exit (1);
 	}
 	
-	gotoxy(cx,cy);
 
 	// check to see if we're already marked to rotate
-	cc = cpeekcolor();
+	gotoxy (cx,cy);
+	cc = cpeekcolor ();
 		
 	if (cc == RED) {
 		return;
 	}
 
-	c = cpeekc();
+	c = cpeekc ();
 
 	if (c == dirtable[dir][0] || c == dirtable[dir][1]) {
-		textcolor(RED);
-		cputc(c);
-		textcolor(WHITE);
+		textcolor (RED);
+		cputc (c);
+		textcolor (WHITE);
 		
-		Enqueue(Q,cx,cy);
+		Enqueue (Q,cx,cy);
 		++score;
-		updatescore();
+		updatescore ();
 	}
 }
 
 void processQ(Queue *Q) {
 	static unsigned char c,nc;
 	static unsigned char mx,my;
-
-	unsigned char mq = 0;
 	
 	while ((unsigned char) Q->size != 0) {
 		mx = (unsigned char) Q->qx[Q->front];
 		my = (unsigned char) Q->qy[Q->front];
 		
-		gotoxy(mx,my);
+		gotoxy (mx,my);
 		
-		c = cpeekc();
+		c = cpeekc ();
 
 		switch (c) {
 			case 105:
@@ -253,158 +541,153 @@ void processQ(Queue *Q) {
 				break;
 		}
 
-		textcolor(WHITE);
-		cputcxy(mx,my,nc);
+		textcolor (WHITE);
+		cputcxy (mx,my,nc);
 
-		if ((char)Q->size > mq) {
-			mq = (char)Q->size;
-		}
-
-		Deqeue(Q);
+		Deqeue (Q);
 
 		for (c = 0;  c <= 1; ++c) {
-			waitvsync();
+			waitvsync ();
 		}
 	}
-	cputsxy(2,16,"ready");
+	cputsxy (2,16,"ready");
 }
 
-void cbox (unsigned char tx,unsigned char ty,unsigned char bx,unsigned char by) {
-	unsigned char bw,bh;
+void markcol (unsigned char mx,unsigned char my) {
+	unsigned char c,y;
 	
-	bw = (bx - tx) - 1;
-	bh = (by - ty) - 1;
-	
-	cputcxy(tx,ty,117);   // TL corner
-	chlinexy(tx+1,ty,bw); // top line
-	cputcxy(bx,ty,105);   // TR corner
-	cvlinexy(bx,ty+1,bh); // right line
-	cputcxy(bx,by,107);   // BR corner
-	chlinexy(tx+1,by,bw); // bottom line
-	cputcxy(tx,by,106);   // BL corner
-	cvlinexy(tx,ty+1,bh); // left line
+	// clicked on top column marker
+	if (my == 0) {
+		gotoxy (mx,1);
+		c = cpeekc ();
+		
+	}
+	// clicked on bottom column marker
+	else if (my == 17) {
+		gotoxy (mx,16);
+		c = cpeekc ();
+	}
+
+	for (y = 1; y <= 16; ++y) {
+		cputcxy (mx,y,c);
+	}
 }
 
-void newboard() {
-	unsigned char row,rows,cols,x;
-	unsigned char cpart;
-
-	// print the "Grid" text
-	row = 0;
-	gotoxy(2,row);
-	for (rows = 0; rows < 4; rows++) {
-		for (cols = 0; cols < 8; cols++) {
-			cprintf("%c",grid[rows][cols]);
-		}
-		row++;
-		gotoxy(2,row);
+void markrow (unsigned char mx,unsigned char my) {
+	unsigned char c,x;
+	
+	// clicked on top column marker
+	if (mx == 11) {
+		gotoxy (12,my);
+		c = cpeekc ();
+		
+	}
+	// clicked on bottom column marker
+	else if (mx == 28) {
+		gotoxy (27,my);
+		c = cpeekc ();
 	}
 
-	// print the "game" text
-	row = 0;
-	gotoxy(29,row);
-	for (rows = 0; rows < 4; rows++) {
-		for (cols = 0; cols < 9; cols++) {
-			cprintf("%c",game[rows][cols]);
-		}
-		row++;
-		gotoxy(29,row);
+	for (x = 12; x <= 27; ++x) {
+		cputcxy (x,my,c);
 	}
-
-	cbox(LX-1,LY-1,HX+1,HY+1);
-
-	for (rows = LY; rows <= HY ; rows++) {
-		for (cols = LX; cols <= HX ; cols++) {
-			x = (rand() % 4);
-			switch (x) {
-				case 0:
-					cpart = 105;
-					break;
-				case 1:
-					cpart = 106;
-					break;
-				case 2:
-					cpart = 107;
-					break;
-				case 3:
-					cpart = 117;
-					break;
-			}
-			cputcxy(cols,rows,cpart);
-		}
-	}
-	
-	cputsxy(2,5,"score:");
-	cputsxy(2,8,"high");
-	cputsxy(2,9,"score:");
-	
-	updatescore();
-	
-	// reset button
-	cputsxy(31,5,"UCCCCCI");
-	cputsxy(31,6,"BresetB");
-	cputsxy(31,7,"JCCCCCK");
-	
-	cputsxy(8,18,"click on a piece to start.");
-	cputsxy(8,19,"try to get the chain reaction");
-	cputsxy(8,20,"going as long as possible.");
-	cputsxy(8,21,"edges touching trigger rotation.");
 }
 
-int main() {
+void mbutton (unsigned char mx, unsigned char my) {
+	// clicked on game 'reset' button
+	if ((mx >= 31 && mx <= 37) && (my >= 5 && my <= 7)) {
+		redrawboard = 1;
+		clrscr ();
+		updateboard ();
+	} 
+	// clicked on 'done/edit' button
+	else if ((mx >= 31 && mx <= 37) && (my >= 8 && my <= 10)) {
+		if (editmode) {
+			editmode = 0;
+			redrawboard = 0;
+			score = 0;
+			updateboard ();
+		} else {
+			editmode = 1;
+			redrawboard = 0;
+			updateboard ();
+		}
+	}
+	if (editmode) {
+		if ((mx >= 31 && mx <= 37) && (my >= 11 && my <= 13)) {
+			loadboard ();
+		}
+		if ((mx >= 31 && mx <= 37) && (my >= 14 && my <= 17)) {
+			saveboard ();
+		}
+		if ((mx >= 12 && mx <= 27) && (my == 0 || my == 17)) {
+			// mark column same as top/bottom cell
+			markcol (mx,my);
+		}
+		if ((mx == 11 || mx == 28) && (my >= 1 && my <= 16)) {
+			// mark row same as left/right
+			markrow (mx,my);
+		}
+	}
+}
+
+int main () {
 	struct mouse_info info;
 	unsigned char c,mbl,mx,my;
 
-	Queue *Q = createQueue(127);
+	Queue *Q = createQueue (127);
 
-	videomode(0);
+	videomode (0);
 
-	clrscr();
+	clrscr ();
 
 	// kick us back into upper-case/PETSCII mode
-	__asm__ ("lda #$8E");
-	__asm__ ("jsr $FFD2");
+	cbm_k_bsout (CH_FONT_UPPER);
 
-	_randomize();
+	#ifndef __CX16__
+	textcolor (WHITE);
+	#endif
 
-	mouse_load_driver(&mouse_def_callbacks, mouse_stddrv);
-	mouse_install(&mouse_def_callbacks,mouse_static_stddrv);
-	mouse_show();
+	_randomize ();
 
-	loadhs();
+	mouse_load_driver (&mouse_def_callbacks, mouse_stddrv);
+	mouse_install (&mouse_def_callbacks,mouse_static_stddrv);
+	mouse_show ();
+
+	loadhs ();
 	
-	newboard();
+	updateboard ();
 	
 	while (1) {
-		mouse_info(&info);
+		mbl = 0;
+		mouse_info (&info);
 		mbl = (info.buttons & MOUSE_BTN_LEFT);
 		for (c = 0; c <= 5; c++) {
-			waitvsync();
+			waitvsync ();
 		}
 		if (mbl) {
-			cclearxy(2,16,5);  // clear the 'ready' text 
-			score = 0;
-			updatescore();
 			mx = info.pos.x >> 3;
 			my = info.pos.y >> 3;
-			// only process stuff on the board, certainly not the corners!
+
+			// check for clicks on gameboard
 			if ((mx >= LX && mx <= HX) && (my >= LY && my <= HY)) {
-				gotoxy(mx,my);
-				c = cpeekc();
-				textcolor(RED);
-				cputcxy(c,mx,my);
-				textcolor(WHITE);
-				Enqueue(Q,mx,my);
-				processQ(Q);
+				cclearxy (2,16,5);  // clear the 'ready' text 
+				score = 0;
+				updatescore ();
+				gotoxy (mx,my);
+				c = cpeekc ();
+				textcolor (RED);
+				cputcxy (c,mx,my);
+				textcolor (WHITE);
+				Enqueue (Q,mx,my);
+				processQ (Q);
 			} else {
-				// clicked on 'reset' button
-				if ((mx >= 31 && mx <= 37) && (my >= 5 && my <= 7)) {
-					clrscr();
-					newboard();
-				}
+				mbutton (mx,my);
+			}
+			if (editmode == 0) {
+				savehs ();
 			}
 		}
-		savehs();
 	}
 	return 0;
 }
