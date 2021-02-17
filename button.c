@@ -38,6 +38,7 @@ void mbutton (unsigned char mx, unsigned char my) {
 		}
 		if ((mx >= 1 && mx <= 7) && (my >=11 && my <= 13)) {
 			global_nhs = true;
+			global_hscore = 0;
 			savehs ();
 		}
 		if ((mx >= 12 && mx <= 27) && (my == 0 || my == 17)) {

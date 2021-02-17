@@ -8,6 +8,10 @@
 #define LY  1	// low 'y' val (top of playfield)
 #define HY  16	// high 'y' val (bottom of playfield)
 
+// Some colors we use in here
+#define WHITE 97
+#define RED   98
+
 extern unsigned int global_hscore;
 extern unsigned int global_score;
 extern bool global_overwrite;
