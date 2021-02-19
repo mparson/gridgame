@@ -8,9 +8,11 @@
 #define LY  1	// low 'y' val (top of playfield)
 #define HY  16	// high 'y' val (bottom of playfield)
 
-// Some colors we use in here
-#define WHITE 97
-#define RED   98
+// For some reason, cpeekcolor () returns '98' for COLOR_RED text instead of '2'.
+#ifdef  __CX16__
+#undef COLOR_RED
+#define COLOR_RED   98
+#endif
 
 extern unsigned int global_hscore;
 extern unsigned int global_score;

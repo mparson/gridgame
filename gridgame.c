@@ -46,7 +46,7 @@ int main () {
 	cbm_k_bsout (CH_FONT_UPPER);
 
 	#ifndef __CX16__
-	textcolor (WHITE);
+	textcolor (COLOR_WHITE);
 	#endif
 
 	_randomize ();
@@ -77,15 +77,15 @@ int main () {
 				updatescore ();
 				gotoxy (mx,my);
 				c = cpeekc ();
-				textcolor (RED);
+				textcolor (COLOR_RED);
 				cputcxy (c,mx,my);
-				textcolor (WHITE);
+				textcolor (COLOR_WHITE);
 				Enqueue (Q,mx,my);
 				processQ (Q);
 			} else {
 				mbutton (mx,my);
 			}
-			if (global_editmode == 0) {
+			if (global_editmode == false) {
 				savehs ();
 			}
 		}

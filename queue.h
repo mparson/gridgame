@@ -15,13 +15,10 @@ typedef struct Queue {
 }Queue;
 
 extern void Enqueue (Queue *Q,unsigned char ex, unsigned char ey);
-extern void processQ(Queue *Q);
+extern void processQ (Queue *Q);
 
 Queue * createQueue (unsigned int maxElements);
-
 void Deqeue (Queue *Q);
 void check (Queue *Q, unsigned char cx, unsigned char cy, unsigned char dir);
-
-
 
 #endif

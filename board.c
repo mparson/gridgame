@@ -100,10 +100,10 @@ void updateboard () {
 		drawbutton (31,14," save"); // save board to disk
 		drawbutton (1,11,"reset");  // high score reset button
 		gotoxy(0,19);
-		cprintf("click on a piece to rotate it\r\n");
-		cprintf("clicking on an '*' on the border will\r\n");
-		cprintf("change the whole row or column to match\r\n");
-		cprintf("the adjacent piece.");
+		cprintf ("click on a piece to rotate it\r\n");
+		cprintf ("clicking on an '*' on the border will\r\n");
+		cprintf ("change the whole row or column to match\r\n");
+		cprintf ("the adjacent piece.");
 	} else {
 		drawbutton (31,5,"reset");  // generate new random board
 		drawbutton (31,8," edit");  // edit board
@@ -112,11 +112,10 @@ void updateboard () {
 
 		cboxclear (0,18,39,24);     // erase the bottom of screen
 		gotoxy (0,19);
-		cprintf("the objective of the game is to get a\r\n");
-		cprintf("chain reaction of tiles as long as\r\n"); 
-		cprintf("possible.tiles will start each other if\r\n");
-		cprintf("their lines are connected.\r\n");
-		cprintf("click on a tile to start.");
+		cprintf ("the objective of the game is to get a\r\n");
+		cprintf ("chain reaction of tiles as long as\r\n");
+		cprintf ("possible.tiles will start each other if\r\n");
+		cprintf ("their lines are connected.\r\n");
+		cprintf ("click on a tile to start.");
 	}
 }
-

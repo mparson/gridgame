@@ -53,7 +53,6 @@ void Enqueue (Queue *Q,unsigned char ex, unsigned char ey) {
 		if (Q->rear == Q->capacity) {
 			Q->rear = 0;
 		}
-
 		Q->qx[Q->rear] = ex;
 		Q->qy[Q->rear] = ey;
 	}
@@ -105,17 +104,17 @@ void check (Queue *Q, unsigned char cx, unsigned char cy, unsigned char dir) {
 	// check to see if we're already marked to rotate
 	gotoxy (cx,cy);
 	cc = cpeekcolor ();
-		
-	if (cc == RED) {
+	
+	if (cc == COLOR_RED) {
 		return;
 	}
 
 	c = cpeekc ();
 
 	if (c == dirtable[dir][0] || c == dirtable[dir][1]) {
-		textcolor (RED);
+		textcolor (COLOR_RED);
 		cputc (c);
-		textcolor (WHITE);
+		textcolor (COLOR_WHITE);
 		
 		Enqueue (Q,cx,cy);
 		++global_score;
@@ -123,7 +122,7 @@ void check (Queue *Q, unsigned char cx, unsigned char cy, unsigned char dir) {
 	}
 }
 
-void processQ(Queue *Q) {
+void processQ (Queue *Q) {
 	static unsigned char c,nc;
 	static unsigned char mx,my;
 	
@@ -158,7 +157,7 @@ void processQ(Queue *Q) {
 				break;
 		}
 
-		textcolor (WHITE);
+		textcolor (COLOR_WHITE);
 		cputcxy (mx,my,nc);
 
 		Deqeue (Q);
