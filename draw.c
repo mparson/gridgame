@@ -52,11 +52,10 @@ void drawbutton (char bx, char by, char btext[]) {
 	unsigned char bl = strlen (btext);
 	bool em = global_editmode; // save the global_editmode
 
-	global_editmode = 0; // we want real line draw chars, not '*'
+	global_editmode = false; // we want real line draw chars, not '*'
 	
 	cbox (bx,by,bx+bl+1,by+2);
 	cputsxy (bx+1,by+1,btext);
 	
 	global_editmode = em; // back to whatever it was before
 }
-

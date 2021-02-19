@@ -62,7 +62,7 @@ void loadfile (unsigned char filename[], unsigned char fsize) {
 				cbm_read (2,fbuf,16); // only read 16 chars
 				cprintf ("%s",fbuf);
 			}
-			sb = 0;
+			sb = false;
 		} else { 
 			cbm_read (2,fbuf,fsize);
 			cbm_close (2);
@@ -105,7 +105,7 @@ void savefile (unsigned char filename[], unsigned int fsize) {
 			// cprintf ("%s\r\n",fbuf);
 			cbm_write (2,fbuf,16); // only write 16 chars
 		}
-		sb = 0;
+		sb = false;
 	} else {
 		cbm_write (2,fbuf,fsize);
 	}
@@ -124,7 +124,7 @@ void loadboard () {
 	gotoxy (0,19);
 	cprintf ("loading board: %s",filename);
 	global_overwrite = true; // force attempting to load (TODO: why?)
-	sb = 1;
+	sb = true;
 	loadfile (filename,1);   // board loading does it's own file sizing
 	cclearxy (0,21,40);      // clear 'load...' text.
 
@@ -144,6 +144,7 @@ void saveboard () {
 	unsigned char c;
 
 	cursor (1);
+	cboxclear (0,18,39,24);  // clear the bottom of the screen}
 	cputsxy (0,18,"filename? ");
 	scanf ("%s",&filename);
 	
@@ -159,7 +160,7 @@ void saveboard () {
 	// force attempting to save
 	global_overwrite = true;
 	// so savefile () knows to do the board handling
-	sb = 1;
+	sb = true;
 	savefile (filename,1);
 	// clear 'saving...' text.
 	cclearxy (0,21,40);
@@ -174,4 +175,3 @@ void saveboard () {
 	cursor (0);
 	updateboard ();
 }
-
