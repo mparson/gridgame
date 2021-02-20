@@ -38,7 +38,9 @@ int main () {
 
 	Queue *Q = createQueue (127);
 
+	#ifdef __CX16__
 	videomode (0);
+	#endif
 
 	clrscr ();
 
@@ -47,6 +49,8 @@ int main () {
 
 	#ifndef __CX16__
 	textcolor (COLOR_WHITE);
+	bordercolor (COLOR_BLUE);
+	bgcolor (COLOR_BLUE);
 	#endif
 
 	_randomize ();
@@ -56,8 +60,10 @@ int main () {
 	mouse_show ();
 
 	loadhs ();
-	global_redrawboard = true;
+	global_newrandboard = true;
 	updateboard ();
+	global_newrandboard = false;
+	stashboard ();
 	
 	while (1) {
 		mbl = 0;
@@ -86,8 +92,17 @@ int main () {
 				mbutton (mx,my);
 			}
 			if (global_editmode == false) {
+				#ifndef __CX16__
+				cputcxy (2,16,"new hs");
+				cputcxy (2,17,"saving");
+				#endif
 				savehs ();
+				#ifndef __CX16__
+				cclearxy (2,16,6); // clear the 'new hs' text.
+				cclearxy (2,17,6); // clear the 'saving' text.
+				#endif
 			}
+			cputsxy (2,16,"ready");
 		}
 	}
 	return 0;

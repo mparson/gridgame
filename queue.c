@@ -65,7 +65,7 @@ void check (Queue *Q, unsigned char cx, unsigned char cy, unsigned char dir) {
 	if (global_editmode) {
 		return;
 	}
-	
+
 	switch (dir) {
 		case 0:                    // left
 			if (cx > LX) {
@@ -100,11 +100,11 @@ void check (Queue *Q, unsigned char cx, unsigned char cy, unsigned char dir) {
 			cprintf ("what?!");
 			exit (1);
 	}
-	
+
 	// check to see if we're already marked to rotate
 	gotoxy (cx,cy);
 	cc = cpeekcolor ();
-	
+
 	if (cc == COLOR_RED) {
 		return;
 	}
@@ -115,7 +115,7 @@ void check (Queue *Q, unsigned char cx, unsigned char cy, unsigned char dir) {
 		textcolor (COLOR_RED);
 		cputc (c);
 		textcolor (COLOR_WHITE);
-		
+
 		Enqueue (Q,cx,cy);
 		++global_score;
 		updatescore ();
@@ -125,13 +125,13 @@ void check (Queue *Q, unsigned char cx, unsigned char cy, unsigned char dir) {
 void processQ (Queue *Q) {
 	static unsigned char c,nc;
 	static unsigned char mx,my;
-	
+
 	while ((unsigned char) Q->size != 0) {
 		mx = (unsigned char) Q->qx[Q->front];
 		my = (unsigned char) Q->qy[Q->front];
-		
+
 		gotoxy (mx,my);
-		
+
 		c = cpeekc ();
 
 		switch (c) {
@@ -166,5 +166,4 @@ void processQ (Queue *Q) {
 			waitvsync ();
 		}
 	}
-	cputsxy (2,16,"ready");
 }
