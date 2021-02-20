@@ -1,5 +1,6 @@
 #include <conio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "global.h"
 #include "board.h"
@@ -21,6 +22,36 @@ static unsigned char game[4][9] = {
 
 bool global_nhs;
 
+void fetchboard () {
+	unsigned char x,y;
+
+	for (y = 0; y <= 15; ++y) {
+		for (x = 0; x <= 15; ++x) {
+			gotoxy (x + LX,y + LY);
+			board[x][y] = cpeekc ();
+		}
+	}
+}
+
+void drawgameboard () {
+	unsigned char x,y;
+
+	for (y = 0; y <= 15; ++y) {
+		for (x = 0; x <= 15; ++x) {
+			cputcxy(x + LX, y + LY, board[x][y]);
+		}
+	}
+}
+
+void stashboard () {
+	fetchboard ();
+	memcpy ((void*) 0xA000, board, 256);
+}
+
+void getboard () {
+	memcpy (board, (void*) 0xA000, 256);
+}
+
 void updatescore () {
 	if (global_score >= global_hscore) {
 		global_nhs = true;
@@ -30,14 +61,39 @@ void updatescore () {
 		gotoxy (2,10);
 		cprintf ("%6d",global_hscore);
 	}
-	
+
 	gotoxy (2,6);
 	cprintf ("%6d",global_score);
 }
 
-void updateboard () {
-	unsigned char row,rows,cols,x;
+void newrandboard () {
+	unsigned char c,x,y;
 	unsigned char cpart;
+
+	for (y = 0; y <= 15 ; ++y) {
+		for (x = 0; x <= 15 ; ++x) {
+			c = (rand () % 4);
+			switch (c) {
+				case 0:
+					cpart = 105;
+					break;
+				case 1:
+					cpart = 106;
+					break;
+				case 2:
+					cpart = 107;
+					break;
+				case 3:
+					cpart = 117;
+					break;
+			}
+			board[x][y] = cpart;
+		}
+	}
+}
+
+void updateboard () {
+	unsigned char row,rows,cols;
 
 	// print the "Grid" text
 	row = 0;
@@ -63,38 +119,22 @@ void updateboard () {
 
 	cbox (LX-1,LY-1,HX+1,HY+1);
 
-	if (global_redrawboard) {
-		for (rows = LY; rows <= HY ; ++rows) {
-			for (cols = LX; cols <= HX ; ++cols) {
-				x = (rand () % 4);
-				switch (x) {
-					case 0:
-						cpart = 105;
-						break;
-					case 1:
-						cpart = 106;
-						break;
-					case 2:
-						cpart = 107;
-						break;
-					case 3:
-						cpart = 117;
-						break;
-				}
-				cputcxy (cols,rows,cpart);
-			}
-		}
+	if (global_newrandboard) {
+		newrandboard ();
 	}
-	
+
+	drawgameboard ();
+
 	cputsxy (2,5,"score:");
 	cputsxy (2,8,"high");
 	cputsxy (2,9,"score:");
-	
+
 	updatescore ();
-	
+
 	if (global_editmode) {
 		cboxclear (31,5,37,7);      // erase 'reset' button
 		cboxclear (0,18,39,24);     // erase the bottom of screen
+		cboxclear (29,11,39,17);    // erase everything below the 'edit' button.
 		drawbutton (31,8," done");  // want 'reset' and 'done' buttons to be same size
 		drawbutton (31,11," load"); // load new board
 		drawbutton (31,14," save"); // save board to disk
@@ -105,10 +145,11 @@ void updateboard () {
 		cprintf ("change the whole row or column to match\r\n");
 		cprintf ("the adjacent piece.");
 	} else {
+		cboxclear (31,11,37,16);    // remove the load/save buttons above
+		cboxclear (1,11,7,13);      // remove the 'reset' button under the high score
 		drawbutton (31,5,"reset");  // generate new random board
 		drawbutton (31,8," edit");  // edit board
-		cboxclear (31,11,37,16);    // remove the load/save buttons above 
-		cboxclear (1,11,7,13);      // remove the 'reset' button under the high score
+		drawbutton (30,15,"replay");// play original board again
 
 		cboxclear (0,18,39,24);     // erase the bottom of screen
 		gotoxy (0,19);

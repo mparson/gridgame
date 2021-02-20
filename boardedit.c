@@ -4,7 +4,7 @@
 
 void markcol (unsigned char mx,unsigned char my) {
 	unsigned char c,y;
-	
+
 	// clicked on top column marker
 	if (my == 0) {
 		gotoxy (mx,1);
@@ -22,7 +22,7 @@ void markcol (unsigned char mx,unsigned char my) {
 
 void markrow (unsigned char mx,unsigned char my) {
 	unsigned char c,x;
-	
+
 	// clicked on top column marker
 	if (mx == 11) {
 		gotoxy (12,my);

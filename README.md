@@ -30,6 +30,14 @@ rotations.
 ## Board editing, saving, and loading
 ![gridedit](gridedit.png)
 
+New feature in v0.9.5
+
+'REPLAY' button - lets you replay the board, resets the board to the
+last time the board was 'RESET', or any 'EDIT' actions taken.  Now you
+can see if you can find a better starting point from the same board.
+Great for two-players, should you find someone willing to play against.
+;-)
+
 New feature in v0.9.1
 
 The 'RESET' button on the HIGH SCORE now resets the HIGH SCORE to
