@@ -16,7 +16,7 @@
 
 extern unsigned int global_hscore;
 extern unsigned int global_score;
-extern bool global_overwrite;
+//extern bool global_overwrite;
 extern bool global_nhs;
 extern bool global_editmode;
 extern bool global_newrandboard;

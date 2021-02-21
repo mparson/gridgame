@@ -62,8 +62,6 @@ int main () {
 	loadhs ();
 	global_newrandboard = true;
 	updateboard ();
-	global_newrandboard = false;
-	stashboard ();
 	
 	while (1) {
 		mbl = 0;
