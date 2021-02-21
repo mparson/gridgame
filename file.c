@@ -147,27 +147,36 @@ void saveboard () {
 	cboxclear (0,18,39,24);  // clear the bottom of the screen}
 	cputsxy (0,18,"filename? ");
 	scanf ("%s",&filename);
+	
+	if (strcmp (filename,(unsigned char*) "highscore")) {
 
-	gotoxy (0,19);
-	cprintf ("saving board: %s",filename);
-	// force attempting to save
-	//global_overwrite = true;
-	// so savefile () knows to do the board handling
-	sb = true;
-	savefile (filename,1);
-	//global_overwrite = false;
-	// clear 'saving...' text.
-	cclearxy (0,21,40);
-	gotoxy (0,21);
-	cprintf ("board %s saved\r\n",filename);
-	// wait for 2 seconds
-	for (c = 0; c <= 120 ; ++c) {
-		waitvsync ();
+		gotoxy (0,19);
+		cprintf ("saving board: %s",filename);
+		// force attempting to save
+		//global_overwrite = true;
+		// so savefile () knows to do the board handling
+		sb = true;
+		savefile (filename,1);
+		//global_overwrite = false;
+		// clear 'saving...' text.
+		cclearxy (0,21,40);
+		gotoxy (0,21);
+		cprintf ("board %s saved\r\n",filename);
+		// wait for 2 seconds
+		for (c = 0; c <= 120 ; ++c) {
+			waitvsync ();
+		}
+		// clear the bottom of the screen
+		cboxclear (0,18,39,24);
+		cursor (0);
+		cclearxy (0,16,7);
+		getboard ();
+		updateboard ();
+	} else {
+		cputsxy (0,19,"can't name a board 'highscore'");
+		for (c = 0; c <= 120 ; ++c) {
+			waitvsync ();
+		}
+		return;
 	}
-	// clear the bottom of the screen
-	cboxclear (0,18,39,24);
-	cursor (0);
-	cclearxy (0,16,7);
-	getboard ();
-	updateboard ();
 }
