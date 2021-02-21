@@ -12,7 +12,7 @@
 
 unsigned int global_score;
 unsigned int global_hscore;
-bool global_overwrite;
+// bool global_overwrite;
 //bool global_nhs;
 
 unsigned char filename[16]; // 16 char filename limit in C= DOS
@@ -23,9 +23,9 @@ char board[16][16];
 bool sb;
 
 void loadhs () {
-	global_overwrite = true;
+	//global_overwrite = true;
 	loadfile ("highscore",6);  // high scores are max 6 chars long.
-	global_overwrite = false;
+	//global_overwrite = false;
 	global_hscore = atoi (fbuf);
 }
 
@@ -37,13 +37,13 @@ void savehs () {
 	}
 
 	if (global_nhs == true) {
-		global_overwrite = true;
+		//global_overwrite = true;
 		gotoxy (0,24);
 		itoa (global_hscore,fbuf,10);
 		gotoxy (0,24);
 		savefile ("highscore",strlen (fbuf));
 		global_nhs = false;
-		global_overwrite = false;
+		//global_overwrite = false;
 	}
 }
 
@@ -84,20 +84,21 @@ static void append (char* s,char c) {
 void savefile (unsigned char filename[], unsigned int fsize) {
 	unsigned char x,y;
 
-	if (global_overwrite) {
+//	if (global_overwrite) {
 		strcpy (tmpname,"s0:");
 		strcat (tmpname,filename);
 		strcat (tmpname,",s");
 
 		cbm_open (2,8,15,tmpname);
 		cbm_close (2);
-	}
+//	}
 
 	strcpy (tmpname,filename);
 	strcat (tmpname,",s,w");
 	cbm_open (2,8,2,tmpname);
 
 	if (sb) {
+		getboard ();
 		for (y = 0; y <= 15; ++y) {
 			fbuf[0] = '\0';
 			for (x = 0; x <= 15; ++x) {
@@ -137,7 +138,6 @@ void loadboard () {
 	cboxclear (0,18,39,24);  // clear the bottom of the screen}
 	cursor (0);
 	updateboard ();
-	stashboard ();
 }
 
 void saveboard () {
@@ -148,16 +148,14 @@ void saveboard () {
 	cputsxy (0,18,"filename? ");
 	scanf ("%s",&filename);
 
-	getboard ();
-
 	gotoxy (0,19);
 	cprintf ("saving board: %s",filename);
 	// force attempting to save
-	global_overwrite = true;
+	//global_overwrite = true;
 	// so savefile () knows to do the board handling
 	sb = true;
 	savefile (filename,1);
-	global_overwrite = false;
+	//global_overwrite = false;
 	// clear 'saving...' text.
 	cclearxy (0,21,40);
 	gotoxy (0,21);
@@ -169,5 +167,7 @@ void saveboard () {
 	// clear the bottom of the screen
 	cboxclear (0,18,39,24);
 	cursor (0);
+	cclearxy (0,16,7);
+	getboard ();
 	updateboard ();
 }

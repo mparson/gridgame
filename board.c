@@ -22,7 +22,7 @@ static unsigned char game[4][9] = {
 
 bool global_nhs;
 
-void fetchboard () {
+void getboard () {
 	unsigned char x,y;
 
 	for (y = 0; y <= 15; ++y) {
@@ -44,11 +44,11 @@ void drawgameboard () {
 }
 
 void stashboard () {
-	fetchboard ();
+	getboard ();
 	memcpy ((void*) 0xA000, board, 256);
 }
 
-void getboard () {
+void fetchboard () {
 	memcpy (board, (void*) 0xA000, 256);
 }
 
@@ -94,7 +94,7 @@ void newrandboard () {
 
 void updateboard () {
 	unsigned char row,rows,cols;
-
+	
 	// print the "Grid" text
 	row = 0;
 	gotoxy (2,row);
@@ -124,6 +124,7 @@ void updateboard () {
 	}
 
 	drawgameboard ();
+	stashboard ();
 
 	cputsxy (2,5,"score:");
 	cputsxy (2,8,"high");
