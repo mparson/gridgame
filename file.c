@@ -31,8 +31,6 @@ void loadhs () {
 
 void savehs () {
 	if (global_editmode) {
-		global_nhs = true;
-		global_hscore = 0;
 		updatescore ();
 	}
 

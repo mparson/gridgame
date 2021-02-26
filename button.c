@@ -45,12 +45,12 @@ void mbutton (unsigned char mx, unsigned char my) {
 		// 'done' button
 		if (global_editmode) {
 			global_editmode = false;
-			global_score = 0;
 			getboard ();
 			updateboard ();
 		} else {
 		// 'edit' button
 			getboard ();
+			global_score = 0;
 			global_editmode = true;
 			global_newrandboard = false;
 			updateboard ();
