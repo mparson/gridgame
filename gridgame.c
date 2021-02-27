@@ -60,6 +60,7 @@ int main () {
 	mouse_show ();
 
 	loadhs ();
+	setupchars ();
 	global_newrandboard = true;
 	updateboard ();
 	
@@ -67,9 +68,7 @@ int main () {
 		mbl = 0;
 		mouse_info (&info);
 		mbl = (info.buttons & MOUSE_BTN_LEFT);
-		for (c = 0; c <= 5; c++) {
-			waitvsync ();
-		}
+		vsyncw (5);
 		if (mbl) {
 			mx = info.pos.x >> 3;
 			my = info.pos.y >> 3;
@@ -77,7 +76,7 @@ int main () {
 			// check for clicks on gameboard
 			if ((mx >= LX && mx <= HX) && (my >= LY && my <= HY)) {
 				cclearxy (2,16,5);  // clear the 'ready' text 
-				global_score = 0;
+				global_score = 1;
 				updatescore ();
 				gotoxy (mx,my);
 				c = cpeekc ();

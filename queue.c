@@ -12,6 +12,32 @@ unsigned char dirtable[4][2] = {
 	{ 107 , 106 }
 };
 
+// screen display codes
+unsigned char newchars[8] = { 68,69,70,71 };
+
+// petscii codes
+unsigned char newcharp[8] = { 100,101,102,103 };
+
+// circle halfs
+unsigned char ch[4][8] = {
+	{ 0,0,0,126,255,195,129,129 },   // top
+	{ 240,56,24,24,24,24,56,240 }, // right 
+	{ 129,129,195,255,126,0,0,0 },   // bottom
+	{ 15,28,24,24,24,24,28,15 }    // left
+};
+
+void setupchars () {
+	unsigned char c,d,e;
+	
+	for (d = 0; d <= 3; ++d) {
+		e = 0;
+		for (c = 0; c <= 7; ++c) {
+			vpoke (ch[d][c],CHARSTART + (newchars[d] * 8) + e);
+			++e;
+		}
+	}
+}
+
 Queue * createQueue (unsigned int maxElements) {
 	Queue *Q;
 	Q = (Queue *)malloc (sizeof (Queue));
@@ -123,7 +149,7 @@ void check (Queue *Q, unsigned char cx, unsigned char cy, unsigned char dir) {
 }
 
 void processQ (Queue *Q) {
-	static unsigned char c,nc;
+	static unsigned char c,nc,hc;
 	static unsigned char mx,my;
 
 	while ((unsigned char) Q->size != 0) {
@@ -136,21 +162,25 @@ void processQ (Queue *Q) {
 
 		switch (c) {
 			case 105:
+				hc = 101;
 				nc = 107;
 				check (Q,mx,my,2); // up
 				check (Q,mx,my,0); // left
 				break;
 			case 106:
+				hc = 103;
 				nc = 117;
 				check (Q,mx,my,3); // down
 				check (Q,mx,my,1); // right
 				break;
 			case 107:
+				hc = 102;
 				nc = 106;
 				check (Q,mx,my,2); // up
 				check (Q,mx,my,1); // right
 				break;
 			case 117:
+				hc = 100;
 				nc = 105;
 				check (Q,mx,my,3); // down
 				check (Q,mx,my,0); // left
@@ -158,12 +188,12 @@ void processQ (Queue *Q) {
 		}
 
 		textcolor (COLOR_WHITE);
+		cputcxy (mx,my,hc);
+		vsyncw (2);
 		cputcxy (mx,my,nc);
 
 		Deqeue (Q);
 
-		for (c = 0;  c <= 1; ++c) {
-			waitvsync ();
-		}
+		vsyncw (1);
 	}
 }

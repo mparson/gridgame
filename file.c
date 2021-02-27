@@ -113,8 +113,6 @@ void savefile (unsigned char filename[], unsigned int fsize) {
 }
 
 void loadboard () {
-	unsigned char c;
-
 	cursor (1);
 	cboxclear (0,18,39,24);  // clear the bottom of the screen}
 	cputsxy (0,18,"filename? ");
@@ -130,17 +128,13 @@ void loadboard () {
 	gotoxy (0,21);
 	cprintf ("board %s loaded\r\n",filename);
 	// wait for 2 seconds
-	for (c = 0; c <= 120 ; ++c) {
-		waitvsync ();
-	}
+	vsyncw (120);
 	cboxclear (0,18,39,24);  // clear the bottom of the screen}
 	cursor (0);
 	updateboard ();
 }
 
 void saveboard () {
-	unsigned char c;
-
 	cursor (1);
 	cboxclear (0,18,39,24);  // clear the bottom of the screen}
 	cputsxy (0,18,"filename? ");
@@ -161,9 +155,7 @@ void saveboard () {
 		gotoxy (0,21);
 		cprintf ("board %s saved\r\n",filename);
 		// wait for 2 seconds
-		for (c = 0; c <= 120 ; ++c) {
-			waitvsync ();
-		}
+		vsyncw (120);
 		// clear the bottom of the screen
 		cboxclear (0,18,39,24);
 		cursor (0);
@@ -172,9 +164,7 @@ void saveboard () {
 		updateboard ();
 	} else {
 		cputsxy (0,19,"can't name a board 'highscore'");
-		for (c = 0; c <= 120 ; ++c) {
-			waitvsync ();
-		}
+		vsyncw (120);
 		return;
 	}
 }
