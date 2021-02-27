@@ -21,4 +21,6 @@ extern bool global_nhs;
 extern bool global_editmode;
 extern bool global_newrandboard;
 
+extern void vsyncw (unsigned char c);
+
 #endif

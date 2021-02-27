@@ -5,6 +5,8 @@
 
 #include "board.h"
 
+#define CHARSTART 63488
+
 // exported struct
 typedef struct Queue {
 	unsigned int capacity;
@@ -16,6 +18,7 @@ typedef struct Queue {
 }Queue;
 
 // exported functions
+extern void setupchars ();
 extern void Enqueue (Queue *Q,unsigned char ex, unsigned char ey);
 extern void processQ (Queue *Q);
 
