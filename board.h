@@ -6,7 +6,7 @@ extern void getboard ();
 extern void stashboard ();
 extern void fetchboard ();
 extern void updatescore ();
-extern void updateboard (); 
+extern void updateboard ();
 
 // exported vars
 extern char board[16][16];

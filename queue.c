@@ -1,7 +1,6 @@
 #include <conio.h>
 #include <stdlib.h>
 
-// #include "board.h"
 #include "global.h"
 #include "queue.h"
 
@@ -15,20 +14,17 @@ unsigned char dirtable[4][2] = {
 // screen display codes
 unsigned char newchars[8] = { 68,69,70,71 };
 
-// petscii codes
-unsigned char newcharp[8] = { 100,101,102,103 };
-
 // circle halfs
 unsigned char ch[4][8] = {
-	{ 0,0,0,126,255,195,129,129 },   // top
-	{ 240,56,24,24,24,24,56,240 }, // right 
-	{ 129,129,195,255,126,0,0,0 },   // bottom
-	{ 15,28,24,24,24,24,28,15 }    // left
+	{ 0,0,0,126,255,231,195,195 },   // top
+	{ 240,248,56,24,24,56,248,240 }, // right
+	{ 195,195,231,255,126,0,0,0 },   // bottom
+	{ 15,31,28,24,24,28,31,15 }      // left
 };
 
 void setupchars () {
 	unsigned char c,d,e;
-	
+
 	for (d = 0; d <= 3; ++d) {
 		e = 0;
 		for (c = 0; c <= 7; ++c) {

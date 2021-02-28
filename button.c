@@ -33,7 +33,7 @@ void mbutton (unsigned char mx, unsigned char my) {
 		if ((mx == 11 || mx == 28) && (my >= 1 && my <= 16)) {
 			markrow (mx,my);
 		}
-	} 
+	}
 	// clicked on game 'reset' button
 	if ((mx >= 31 && mx <= 37) && (my >= 5 && my <= 7)) {
 		global_newrandboard = true;

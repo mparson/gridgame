@@ -3,7 +3,7 @@ ALL_C = $(wildcard *.c) $(wildcard *.h)
 # Run 'make TARGET=<target>', or set a TARGET env
 # to build for another target system.
 TARGET ?= cx16
-CFLAGS = --add-source -Osir
+CFLAGS = -Osir --add-source -Osir
 NAME = GRIDGAME
 # make sure this location exists before a 'make install'
 PREFIX = x:GAMES/$(NAME)

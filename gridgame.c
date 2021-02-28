@@ -63,7 +63,7 @@ int main () {
 	setupchars ();
 	global_newrandboard = true;
 	updateboard ();
-	
+
 	while (1) {
 		mbl = 0;
 		mouse_info (&info);
@@ -75,7 +75,7 @@ int main () {
 
 			// check for clicks on gameboard
 			if ((mx >= LX && mx <= HX) && (my >= LY && my <= HY)) {
-				cclearxy (2,16,5);  // clear the 'ready' text 
+				cclearxy (2,16,5);  // clear the 'ready' text
 				global_score = 1;
 				updatescore ();
 				gotoxy (mx,my);
