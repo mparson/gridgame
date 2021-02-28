@@ -12,8 +12,6 @@
 
 unsigned int global_score;
 unsigned int global_hscore;
-// bool global_overwrite;
-//bool global_nhs;
 
 unsigned char filename[16]; // 16 char filename limit in C= DOS
 unsigned char tmpname[20];  // +3 for "S0:" and +4 for ",s,[rw]"
@@ -23,9 +21,7 @@ char board[16][16];
 bool sb;
 
 void loadhs () {
-	//global_overwrite = true;
 	loadfile ("highscore",6);  // high scores are max 6 chars long.
-	//global_overwrite = false;
 	global_hscore = atoi (fbuf);
 }
 
@@ -35,13 +31,11 @@ void savehs () {
 	}
 
 	if (global_nhs == true) {
-		//global_overwrite = true;
 		gotoxy (0,24);
 		itoa (global_hscore,fbuf,10);
 		gotoxy (0,24);
 		savefile ("highscore",strlen (fbuf));
 		global_nhs = false;
-		//global_overwrite = false;
 	}
 }
 
@@ -82,14 +76,12 @@ static void append (char* s,char c) {
 void savefile (unsigned char filename[], unsigned int fsize) {
 	unsigned char x,y;
 
-//	if (global_overwrite) {
-		strcpy (tmpname,"s0:");
-		strcat (tmpname,filename);
-		strcat (tmpname,",s");
+	strcpy (tmpname,"s0:");
+	strcat (tmpname,filename);
+	strcat (tmpname,",s");
 
-		cbm_open (2,8,15,tmpname);
-		cbm_close (2);
-//	}
+	cbm_open (2,8,15,tmpname);
+	cbm_close (2);
 
 	strcpy (tmpname,filename);
 	strcat (tmpname,",s,w");
@@ -102,7 +94,7 @@ void savefile (unsigned char filename[], unsigned int fsize) {
 			for (x = 0; x <= 15; ++x) {
 				append (fbuf,board[x][y]);
 			}
-			// cprintf ("%s\r\n",fbuf);
+
 			cbm_write (2,fbuf,16); // only write 16 chars
 		}
 		sb = false;
@@ -139,17 +131,15 @@ void saveboard () {
 	cboxclear (0,18,39,24);  // clear the bottom of the screen}
 	cputsxy (0,18,"filename? ");
 	scanf ("%s",&filename);
-	
+
 	if (strcmp (filename,(unsigned char*) "highscore")) {
 
 		gotoxy (0,19);
 		cprintf ("saving board: %s",filename);
-		// force attempting to save
-		//global_overwrite = true;
-		// so savefile () knows to do the board handling
+
 		sb = true;
 		savefile (filename,1);
-		//global_overwrite = false;
+
 		// clear 'saving...' text.
 		cclearxy (0,21,40);
 		gotoxy (0,21);

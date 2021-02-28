@@ -94,7 +94,7 @@ void newrandboard () {
 
 void updateboard () {
 	unsigned char row,rows,cols;
-	
+
 	// print the "Grid" text
 	row = 0;
 	gotoxy (2,row);
