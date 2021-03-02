@@ -21,90 +21,59 @@
 #include <stdio.h>
 #include <conio.h>
 #include <stdlib.h>
+#include <mouse.h>
 #include <string.h>
 #include <stdbool.h>
-
-#ifdef __CX16__
-#include <mouse.h>
-#include "boardedit.h"
-#endif
-
-#ifdef __C64__
-#include <joystick.h>
-#include "joy.h"
-#endif
 
 #include "global.h"
 #include "button.h"
 #include "draw.h"
 #include "board.h"
+#include "boardedit.h"
 #include "queue.h"
 
 int main () {
-	#ifdef __CX16__
 	struct mouse_info info;
-	unsigned char mbl;
-	#endif
-	unsigned char c,mx,my;
-	bool b;
+	unsigned char c,mbl,mx,my;
 
-	Queue *Q = createQueue (63);
+	Queue *Q = createQueue (127);
 
-	#ifdef __C64__
-	textcolor (COLOR_WHITE);
-	bordercolor (COLOR_BLUE);
-	bgcolor (COLOR_BLUE);
-	joy_install (joy_static_stddrv);
-	#endif
-
-	// only use mouse on the X-16 (save memory for the C-64 version)
 	#ifdef __CX16__
 	videomode (0);
-	mouse_load_driver (&mouse_def_callbacks, mouse_stddrv);
-	mouse_install (&mouse_def_callbacks,mouse_static_stddrv);
-	mouse_show ();
-	setupchars ();
-	#endif 
-	
+	#endif
+
 	clrscr ();
 
 	// kick us back into upper-case/PETSCII mode
-	__asm__ ("lda #$8E");
-	__asm__ ("jsr $FFD2");
-	
+	cbm_k_bsout (CH_FONT_UPPER);
+
+	#ifndef __CX16__
+	textcolor (COLOR_WHITE);
+	bordercolor (COLOR_BLUE);
+	bgcolor (COLOR_BLUE);
+	#endif
+
 	_randomize ();
 
+	mouse_load_driver (&mouse_def_callbacks, mouse_stddrv);
+	mouse_install (&mouse_def_callbacks,mouse_static_stddrv);
+	mouse_show ();
+
 	loadhs ();
+	setupchars ();
 	global_newrandboard = true;
 	updateboard ();
 
 	while (1) {
-		#ifdef __CX16__
 		mbl = 0;
 		mouse_info (&info);
 		mbl = (info.buttons & MOUSE_BTN_LEFT);
+		vsyncw (5);
 		if (mbl) {
-			b = true;
 			mx = info.pos.x >> 3;
 			my = info.pos.y >> 3;
-		}
-		#endif
 
-		#ifdef __C64__
-		b = true;
-		jx = 20;
-		jy = 9;
-
-		joyinfo ();
-
-		mx = (unsigned char) jx;
-		my = (unsigned char) jy;
-		#endif
-
-		vsyncw (5);
-		
-		// check for clicks on gameboard
-		if (b) {
+			// check for clicks on gameboard
 			if ((mx >= LX && mx <= HX) && (my >= LY && my <= HY)) {
 				cclearxy (2,16,5);  // clear the 'ready' text
 				global_score = 1;
@@ -121,8 +90,8 @@ int main () {
 			}
 			if (global_editmode == false) {
 				#ifndef __CX16__
-				cputsxy (2,16,"new hs");
-				cputsxy (2,17,"saving");
+				cputcxy (2,16,"new hs");
+				cputcxy (2,17,"saving");
 				#endif
 				savehs ();
 				#ifndef __CX16__
@@ -130,9 +99,8 @@ int main () {
 				cclearxy (2,17,6); // clear the 'saving' text.
 				#endif
 			}
+			cputsxy (2,16,"ready");
 		}
-		b = false;
-		cputsxy (2,16,"ready");
 	}
 	return 0;
 }

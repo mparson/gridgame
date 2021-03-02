@@ -104,4 +104,57 @@ void savefile (unsigned char filename[], unsigned int fsize) {
 	cbm_close (2);
 }
 
+void loadboard () {
+	cursor (1);
+	cboxclear (0,18,39,24);  // clear the bottom of the screen}
+	cputsxy (0,18,"filename? ");
+	scanf ("%s",&filename);
 
+	gotoxy (0,19);
+	cprintf ("loading board: %s",filename);
+	sb = true;
+	loadfile (filename,256); // board is 256 chars
+
+	cclearxy (0,21,40);      // clear 'load...' text.
+
+	gotoxy (0,21);
+	cprintf ("board %s loaded\r\n",filename);
+	// wait for 2 seconds
+	vsyncw (120);
+	cboxclear (0,18,39,24);  // clear the bottom of the screen}
+	cursor (0);
+	updateboard ();
+}
+
+void saveboard () {
+	cursor (1);
+	cboxclear (0,18,39,24);  // clear the bottom of the screen}
+	cputsxy (0,18,"filename? ");
+	scanf ("%s",&filename);
+
+	if (strcmp (filename,(unsigned char*) "highscore")) {
+
+		gotoxy (0,19);
+		cprintf ("saving board: %s",filename);
+
+		sb = true;
+		savefile (filename,1);
+
+		// clear 'saving...' text.
+		cclearxy (0,21,40);
+		gotoxy (0,21);
+		cprintf ("board %s saved\r\n",filename);
+		// wait for 2 seconds
+		vsyncw (120);
+		// clear the bottom of the screen
+		cboxclear (0,18,39,24);
+		cursor (0);
+		cclearxy (0,16,7);
+		getboard ();
+		updateboard ();
+	} else {
+		cputsxy (0,19,"can't name a board 'highscore'");
+		vsyncw (120);
+		return;
+	}
+}
