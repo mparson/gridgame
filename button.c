@@ -43,6 +43,8 @@ void mbutton (unsigned char mx, unsigned char my) {
 	// clicked on game 'reset' button
 	if ((mx >= 31 && mx <= 37) && (my >= 5 && my <= 7)) {
 		global_newrandboard = true;
+		global_score = 0;
+		updatescore ();
 		clrscr ();
 		updateboard ();
 	}

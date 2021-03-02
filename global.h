@@ -20,6 +20,7 @@ extern unsigned int global_score;
 extern bool global_nhs;
 extern bool global_editmode;
 extern bool global_newrandboard;
+extern bool global_b;
 
 extern void vsyncw (unsigned char c);
 
