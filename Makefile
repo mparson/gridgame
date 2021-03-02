@@ -1,5 +1,9 @@
-TARGET = cx16
-CFLAGS = --add-source -Osir
+ALL_ASM = $(wildcard *.asm)
+ALL_C = $(wildcard *.c) $(wildcard *.h)
+# Run 'make TARGET=<target>', or set a TARGET env
+# to build for another target system.
+TARGET ?= cx16
+CFLAGS = -Osir --add-source -Osir
 NAME = GRIDGAME
 # make sure this location exists before a 'make install'
 PREFIX = x:GAMES/$(NAME)
@@ -9,7 +13,7 @@ CC = /home/mparson/Applications/cc65/bin/cc65
 LD = /home/mparson/Applications/cc65/bin/ld65
 CL = /home/mparson/Applications/cc65/bin/cl65
 
-ALL_OBJS = $(patsubst %.c,%.o,$(wildcard *.c)) 
+ALL_OBJS = $(patsubst %.c,%.o,$(wildcard *.c)) $(patsubst %.asm,%.obj,$(wildcard *.asm))
 
 all: $(ALL_OBJS)
 	$(CL) -t $(TARGET) -o $(NAME).PRG -m $(NAME).mmap $(ALL_OBJS)
@@ -17,6 +21,9 @@ all: $(ALL_OBJS)
 %.o: %.c
 	$(CC) $(CFLAGS) -t $(TARGET) -o $(patsubst %.o,%.s,$@) $<
 	$(AS) -t $(TARGET) -o $@ $(patsubst %.o,%.s,$@)
+
+%.obj: %.asm
+	$(AS) -t $(TARGET) -o $@ $<
 
 install: all
 	mcopy -Do -DO $(NAME).PRG $(PREFIX)/

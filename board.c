@@ -43,7 +43,6 @@ void drawgameboard () {
 	}
 }
 
-#ifdef __CX16__
 void stashboard () {
 	getboard ();
 	memcpy ((void*) 0xA000, board, 256);
@@ -52,7 +51,6 @@ void stashboard () {
 void fetchboard () {
 	memcpy (board, (void*) 0xA000, 256);
 }
-#endif
 
 void updatescore () {
 	if (global_score >= global_hscore) {
@@ -126,9 +124,7 @@ void updateboard () {
 	}
 
 	drawgameboard ();
-	#ifdef __CX16__
 	stashboard ();
-	#endif
 
 	cputsxy (2,5,"score:");
 	cputsxy (2,8,"high");
@@ -154,9 +150,7 @@ void updateboard () {
 		cboxclear (1,11,7,13);      // remove the 'reset' button under the high score
 		drawbutton (31,5,"reset");  // generate new random board
 		drawbutton (31,8," edit");  // edit board
-		#ifdef __CX16__
 		drawbutton (30,15,"replay");// play original board again
-		#endif
 
 		cboxclear (0,18,39,24);     // erase the bottom of screen
 		gotoxy (0,19);
