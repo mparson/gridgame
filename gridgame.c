@@ -27,6 +27,7 @@
 #ifdef __CX16__
 #include <mouse.h>
 #include "boardedit.h"
+bool global_b;
 #endif
 
 #ifdef __C64__
@@ -40,13 +41,13 @@
 #include "board.h"
 #include "queue.h"
 
+
 int main () {
 	#ifdef __CX16__
 	struct mouse_info info;
 	unsigned char mbl;
 	#endif
 	unsigned char c,mx,my;
-	bool b;
 
 	Queue *Q = createQueue (63);
 
@@ -84,14 +85,13 @@ int main () {
 		mouse_info (&info);
 		mbl = (info.buttons & MOUSE_BTN_LEFT);
 		if (mbl) {
-			b = true;
+			global_b = true;
 			mx = info.pos.x >> 3;
 			my = info.pos.y >> 3;
 		}
 		#endif
 
 		#ifdef __C64__
-		b = true;
 		jx = 20;
 		jy = 9;
 
@@ -104,7 +104,7 @@ int main () {
 		vsyncw (5);
 		
 		// check for clicks on gameboard
-		if (b) {
+		if (global_b) {
 			if ((mx >= LX && mx <= HX) && (my >= LY && my <= HY)) {
 				cclearxy (2,16,5);  // clear the 'ready' text
 				global_score = 1;
@@ -131,7 +131,7 @@ int main () {
 				#endif
 			}
 		}
-		b = false;
+		global_b = false;
 		cputsxy (2,16,"ready");
 	}
 	return 0;

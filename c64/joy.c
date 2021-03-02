@@ -6,17 +6,17 @@
 #include "joy.h"
 
 short jx,jy;
+bool global_b;
 
 void joyinfo() {
 	unsigned char J,n;
 	unsigned char oc,ojx,ojy;
-	bool jb;
 	
 	gotoxy (jx,jy);
 	oc = cpeekc ();
 	cputc (118);
 	
-	while (!jb) {
+	while (!global_b) {
 		ojx = jx;
 		ojy = jy;
 		
@@ -54,7 +54,7 @@ void joyinfo() {
 				break;
 			case 16:     // button
 				cputcxy (jx,jy,oc);
-				jb = true;
+				global_b = true;
 				return;
 		}
 
