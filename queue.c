@@ -11,15 +11,17 @@ unsigned char dirtable[4][2] = {
 	{ 107 , 106 }
 };
 
-// screen display codes
+#ifdef __CX16__
+// these numbers are the screen display codes
+// corresponding PETSCII codes are 100-103
 unsigned char newchars[8] = { 68,69,70,71 };
 
 // circle halfs
 unsigned char ch[4][8] = {
-	{ 0,0,0,126,255,231,195,195 },   // top
-	{ 240,248,56,24,24,56,248,240 }, // right
-	{ 195,195,231,255,126,0,0,0 },   // bottom
-	{ 15,31,28,24,24,28,31,15 }      // left
+	{ 0,0,0,60,126,231,195,195 },   // top
+	{ 224,240,56,24,24,56,240,224 }, // right
+	{ 195,195,231,126,60,0,0,0 },   // bottom
+	{ 7,15,28,24,24,28,15,7 }      // left
 };
 
 void setupchars () {
@@ -33,6 +35,7 @@ void setupchars () {
 		}
 	}
 }
+#endif
 
 Queue * createQueue (unsigned int maxElements) {
 	Queue *Q;
@@ -184,12 +187,14 @@ void processQ (Queue *Q) {
 		}
 
 		textcolor (COLOR_WHITE);
+		#ifdef __CX16__
 		cputcxy (mx,my,hc);
-		vsyncw (2);
+		#endif
+		vsyncw (3);
 		cputcxy (mx,my,nc);
 
 		Deqeue (Q);
 
-		vsyncw (1);
+		//vsyncw (1);
 	}
 }
