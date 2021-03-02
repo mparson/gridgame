@@ -7,8 +7,6 @@
 
 extern void loadfile (unsigned char filename[], unsigned char fsize);
 extern void savefile (unsigned char filename[], unsigned int fsize);
-extern void loadboard ();
-extern void saveboard ();
 extern void loadhs ();
 extern void savehs ();
 
