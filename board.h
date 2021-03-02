@@ -3,10 +3,13 @@
 
 // exported functions
 extern void getboard ();
-extern void stashboard ();
-extern void fetchboard ();
 extern void updatescore ();
 extern void updateboard ();
+
+#ifdef __CX16__
+extern void stashboard ();
+extern void fetchboard ();
+#endif
 
 // exported vars
 extern char board[16][16];
