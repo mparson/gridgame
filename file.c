@@ -1,5 +1,3 @@
-#include <stdio.h>
-#include <conio.h>
 #include <cbm.h>
 #include <string.h>
 #include <stdlib.h>
@@ -31,9 +29,7 @@ void savehs () {
 	}
 
 	if (global_nhs == true) {
-		gotoxy (0,24);
 		itoa (global_hscore,fbuf,10);
-		gotoxy (0,24);
 		savefile ("highscore",strlen (fbuf));
 		global_nhs = false;
 	}
