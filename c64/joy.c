@@ -5,8 +5,9 @@
 
 #include "joy.h"
 
-short jx,jy;
 bool global_b;
+short jx = 20;
+short jy = 9;
 
 void joyinfo() {
 	unsigned char J,n;

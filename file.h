@@ -3,8 +3,11 @@
 
 #include <stdbool.h>
 
-// exported functions
+// local functions
+void prepend (char* s, const char* t);
+void append (char* s,char c);
 
+// exported functions
 extern void loadfile (unsigned char filename[], unsigned char fsize);
 extern void savefile (unsigned char filename[], unsigned int fsize);
 extern void loadhs ();

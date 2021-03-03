@@ -30,7 +30,10 @@ void savehs () {
 
 	if (global_nhs == true) {
 		itoa (global_hscore,fbuf,10);
-		savefile ("highscore",strlen (fbuf));
+		while (strlen (fbuf) < 6) {
+			prepend (fbuf,"0");
+		}
+		savefile ("highscore",strlen(fbuf));
 		global_nhs = false;
 	}
 }
@@ -59,7 +62,14 @@ void loadfile (unsigned char filename[], unsigned char fsize) {
 	cbm_close (2);
 }
 
-static void append (char* s,char c) {
+void prepend (char* s, const char* t) {
+	unsigned char len = strlen(t);
+	
+	memmove(s + len, s, strlen(s) + 1);
+	memcpy(s, t, len);
+}
+
+void append (char* s,char c) {
 	unsigned char len;
 
 	len = strlen(s);
