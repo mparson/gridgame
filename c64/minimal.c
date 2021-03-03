@@ -22,6 +22,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <peekpoke.h>
 
 #include <joystick.h>
 
@@ -377,8 +378,9 @@ int main () {
 
 	clrscr ();
 	// kick us back into upper-case/PETSCII mode
-	__asm__ ("lda #$8E");
-	__asm__ ("jsr $FFD2");
+	//__asm__ ("lda #$8E");
+	//__asm__ ("jsr $FFD2");
+	POKE (53272,21);
 
 	textcolor (COLOR_WHITE);
 	bordercolor (COLOR_BLUE);
