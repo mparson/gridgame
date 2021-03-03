@@ -18,7 +18,6 @@
  Play at your own risk, no lifeguard on duty.
  */
 
-#include <stdio.h>
 #include <conio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -30,7 +29,7 @@
 bool global_b;
 #endif
 
-#ifdef __C64__
+#if defined __C64__ || defined __C128__
 #include <joystick.h>
 #include "joy.h"
 #endif
@@ -56,7 +55,7 @@ int main () {
 	__asm__ ("lda #$8E");
 	__asm__ ("jsr $FFD2");
 
-	#ifdef __C64__
+	#if defined __C64__ || defined __C128__
 	textcolor (COLOR_WHITE);
 	bordercolor (COLOR_BLUE);
 	bgcolor (COLOR_BLUE);
@@ -91,7 +90,7 @@ int main () {
 		}
 		#endif
 
-		#ifdef __C64__
+		#if defined __C64__ || defined __C128__
 		jx = 20;
 		jy = 9;
 
