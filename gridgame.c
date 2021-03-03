@@ -25,21 +25,20 @@
 
 #ifdef __CX16__
 #include <mouse.h>
-#include "boardedit.h"
 bool global_b;
 #endif
 
 #if defined __C64__ || defined __C128__
 #include <joystick.h>
-#include "joy.h"
+#include "c64/joy.h"
 #endif
 
+#include "boardedit.h"
 #include "global.h"
 #include "button.h"
 #include "draw.h"
 #include "board.h"
 #include "queue.h"
-
 
 int main () {
 	#ifdef __CX16__
@@ -75,6 +74,9 @@ int main () {
 	_randomize ();
 
 	loadhs ();
+	global_nhs = true;
+	updatescore ();
+	global_nhs = false;
 	global_newrandboard = true;
 	updateboard ();
 
@@ -91,9 +93,6 @@ int main () {
 		#endif
 
 		#if defined __C64__ || defined __C128__
-		jx = 20;
-		jy = 9;
-
 		joyinfo ();
 
 		mx = (unsigned char) jx;
@@ -111,25 +110,26 @@ int main () {
 				gotoxy (mx,my);
 				c = cpeekc ();
 				textcolor (COLOR_RED);
-				cputcxy (c,mx,my);
+				cputcxy (mx,my,c);
 				textcolor (COLOR_WHITE);
 				Enqueue (Q,mx,my);
 				processQ (Q);
 			} else {
 				mbutton (mx,my);
 			}
-			if (global_editmode == false) {
-				#ifndef __CX16__
-				cputsxy (2,16,"new hs");
-				cputsxy (2,17,"saving");
-				#endif
-				savehs ();
-				#ifndef __CX16__
-				cclearxy (2,16,6); // clear the 'new hs' text.
-				cclearxy (2,17,6); // clear the 'saving' text.
-				#endif
-			}
 		}
+		if (global_nhs) {
+			#ifndef __CX16__
+			cputsxy (2,16,"new hs");
+			cputsxy (2,17,"saving");
+			#endif
+			savehs ();
+			#ifndef __CX16__
+			cclearxy (2,16,6); // clear the 'new hs' text.
+			cclearxy (2,17,6); // clear the 'saving' text.
+			#endif
+		}
+
 		global_b = false;
 		cputsxy (2,16,"ready");
 	}

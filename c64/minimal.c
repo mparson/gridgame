@@ -410,7 +410,7 @@ int main () {
 				gotoxy (mx,my);
 				c = cpeekc ();
 				textcolor (COLOR_RED);
-				cputcxy (c,mx,my);
+				cputcxy (mx,my,c);
 				textcolor (COLOR_WHITE);
 				Enqueue (Q,mx,my);
 				processQ (Q);

@@ -6,15 +6,10 @@
 #include "board.h"
 #include "boardedit.h"
 
-#ifdef __CX16__
-  #define CAN_EDIT
-#endif
-
 bool global_editmode;
 bool global_newrandboard;
 
 void mbutton (unsigned char mx, unsigned char my) {
-	#ifdef CAN_EDIT
 	if (global_editmode) {
 		// 'load' button
 		if ((mx >= 31 && mx <= 37) && (my >= 11 && my <= 13)) {
@@ -28,7 +23,6 @@ void mbutton (unsigned char mx, unsigned char my) {
 		if ((mx >= 1 && mx <= 7) && (my >=11 && my <= 13)) {
 			global_nhs = true;
 			global_hscore = 0;
-			savehs ();
 		}
 		// mark column same as top/bottom cell
 		if ((mx >= 12 && mx <= 27) && (my == 0 || my == 17)) {
@@ -39,7 +33,7 @@ void mbutton (unsigned char mx, unsigned char my) {
 			markrow (mx,my);
 		}
 	}
-	#endif
+
 	// clicked on game 'reset' button
 	if ((mx >= 31 && mx <= 37) && (my >= 5 && my <= 7)) {
 		global_newrandboard = true;
@@ -64,12 +58,11 @@ void mbutton (unsigned char mx, unsigned char my) {
 			updateboard ();
 		}
 	}
-	#ifdef __CX16__
 	// clicked on the 'replay' button
 	else if ((mx >= 30 && mx <= 37) && (my >= 15 && my <= 17)) {
 		fetchboard ();
+		global_score = 0;
 		global_newrandboard = false;
 		updateboard ();
 	}
-	#endif
 }
