@@ -109,5 +109,3 @@ void savefile (unsigned char filename[], unsigned int fsize) {
 	}
 	cbm_close (2);
 }
-
-
