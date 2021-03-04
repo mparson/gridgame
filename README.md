@@ -2,7 +2,7 @@
 
 # GridGame
 
-A game for the [Commander X-16](https://www.commanderx16.com).
+A game for the [Commander X-16](https://www.commanderx16.com) and Commdore 64.
 
 A 'C' implementation of a Flash game I used to play a lot of back in the
 days of Flash games.
@@ -21,6 +21,9 @@ This is original code that implements the game play, I did not port the
 embedded ActionScript of the original SWF game.
 
 ## Gameplay:
+
+For the C-64 version, use a joystick plugged into port 2, for
+the X-16, use the mouse.
 
 Mostly just like the original, click on a piece to make it rotate,
 if one of its two edges touches the edges of another piece, that
@@ -90,9 +93,12 @@ destinations at the top.
 A simple `make` should give you a `GRIDGAME` that you can now load up on
 an X-16.
 
+Running `make TARGET=c64` will produce a C-64 version.
+
 With a little prep-work, the `Makefile` will 'install' to your sdcard
-for you (location is easily configurable in the `Makefile`).  There is
-also a `run` target that will do the full build/install/run cycle.
+(or a .d64 for the C-64 target) for you (location is easily configurable
+in the `Makefile`).  There is also a `run` target that will do the full
+build/install/run cycle.
 
 To get this to work you will need a suitable sdcard image
 file.  Either use the one provided with the emulator archive,
@@ -102,12 +108,9 @@ images.  It also has instructions for setting up a `~/.mtoolsrc` file so
 the `make install` will work.  You might also need to edit the `runner`
 script if you've changed where on the sdcard you install the game.
 
-## Notes on the kwalitee of my code
-
-Yeah, very intentional bad spelling there.  I make no claims to my
-skills as a C programmer.  This is probably not "good" C code and most
-definitely not optimized in the suggested ways you should when writing
-for `cc65` compiler and the 6502 CPU.
+For C-64 users, there is a `newdisk` target that will make a .d64
+file for you and `make TARGET=c64 install` will copy the game into that
+.d64.
 
 ## Changelog:
 
@@ -126,9 +129,8 @@ v0.5 - Initial release of playable game.
 
 ## Potential features for future versions:
 
-* Versions for the C-64 & C-128
-* Sound - I'll need to read up on how to make cc65 generate sounds.
+- Sound - I'll need to read up on how to make cc65 generate sounds.
   It's documented, but I've not tried that yet.  Step 1 was to get the
   basic game working.
-* See if it will compile with [KickC](https://gitlab.com/camelot/kickc),
+- See if it will compile with [KickC](https://gitlab.com/camelot/kickc),
   then all dev work could even be done on the system it is played on!
