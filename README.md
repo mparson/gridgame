@@ -120,8 +120,9 @@ the approprite emulator and start the game for you.
 
 ## Changelog:
 
-v0.9.2  
+v0.9.6
  - C-64 and C-128 versions
+ - Including some sample boards made with the in game editor
 
 v0.9.1 - Bug fix
  - 'RESET' button under the HIGH SCORE now resets the high score to '0'  
