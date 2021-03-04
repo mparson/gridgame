@@ -64,7 +64,7 @@ void loadfile (unsigned char filename[], unsigned char fsize) {
 
 void prepend (char* s, const char* t) {
 	unsigned char len = strlen(t);
-	
+
 	memmove(s + len, s, strlen(s) + 1);
 	memcpy(s, t, len);
 }

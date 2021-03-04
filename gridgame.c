@@ -28,7 +28,7 @@
 bool global_b;
 #endif
 
-#if defined __C64__ || defined __C128__
+#if defined (__C64__) || defined (__C128__)
 #include <joystick.h>
 #include "c64/joy.h"
 #endif
@@ -54,7 +54,7 @@ int main () {
 	__asm__ ("lda #$8E");
 	__asm__ ("jsr $FFD2");
 
-	#if defined __C64__ || defined __C128__
+	#if defined (__C64__) || defined (__C128__)
 	textcolor (COLOR_WHITE);
 	bordercolor (COLOR_BLUE);
 	bgcolor (COLOR_BLUE);
@@ -68,9 +68,8 @@ int main () {
 	mouse_install (&mouse_def_callbacks,mouse_static_stddrv);
 	mouse_show ();
 	setupchars ();
-	#endif 
+	#endif
 
-	
 	_randomize ();
 
 	loadhs ();
@@ -92,7 +91,7 @@ int main () {
 		}
 		#endif
 
-		#if defined __C64__ || defined __C128__
+		#if defined (__C64__) || defined (__C128__)
 		joyinfo ();
 
 		mx = (unsigned char) jx;
@@ -100,7 +99,7 @@ int main () {
 		#endif
 
 		vsyncw (5);
-		
+
 		// check for clicks on gameboard
 		if (global_b) {
 			if ((mx >= LX && mx <= HX) && (my >= LY && my <= HY)) {
