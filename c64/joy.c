@@ -12,15 +12,15 @@ short jy = 9;
 void joyinfo() {
 	unsigned char J,n;
 	unsigned char oc,ojx,ojy;
-	
+
 	gotoxy (jx,jy);
 	oc = cpeekc ();
 	cputc (118);
-	
+
 	while (!global_b) {
 		ojx = jx;
 		ojy = jy;
-		
+
 		J = joy_read (JOY_2);
 		// gotoxy (0,0);
 		// cprintf("j=%d\r\n",J);
@@ -42,7 +42,7 @@ void joyinfo() {
 				--jx;
 				++jy;
 				break;
-			case 8:      // right 
+			case 8:      // right
 				++jx;
 				break;
 			case 9:      // up right
@@ -63,7 +63,7 @@ void joyinfo() {
 		if (jy >= 24 ) jy = 24;
 		if (jx <=0 ) jx = 0;
 		if (jx >= 39 ) jx = 39;
-		
+
 		cputcxy (ojx,ojy,oc);
 		gotoxy (jx,jy);
 		oc = cpeekc();
