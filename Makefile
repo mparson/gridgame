@@ -1,10 +1,10 @@
-lc = $(shell echo ${1} | tr '[:upper:]' '[:lower:]')
+uc = $(shell echo ${1} | tr '[:lower:]' '[:upper:]')
 SHELL := bash
 TARGET ?= cx16
 CFLAGS = --add-source -Osir
-NAME = GRIDGAME
+NAME = gridgame
 # make sure this location exists before a 'make install'
-PREFIX = x:GAMES/$(NAME)
+PREFIX = x:GAMES/$(call uc,$(NAME))
 ALL_OBJS = $(patsubst %.c,%.o,$(wildcard *.c))
 X16 = /home/mparson/Applications/X16/x16emu
 AS = ca65
@@ -13,14 +13,14 @@ LD = ld65
 CL = cl65
 ifeq ($(TARGET),$(filter $(TARGET),c64 c128))
 ALL_OBJS += joy.o
-DISK = $(call lc,$(NAME).d64)
+DISK = $(NAME)-$(TARGET).d64
 else
 DISK = ~/basic-progs.img
 endif
-ALL_BOARDS = $(wildcard boards/*)
+ALL_BOARDS = $(wildcard boards/*.gb)
 
 all: $(ALL_OBJS)
-	$(CL) -t $(TARGET) -o $(NAME).PRG -m $(NAME).mmap $(ALL_OBJS)
+	$(CL) -t $(TARGET) -o $(NAME) -m $(NAME).mmap $(ALL_OBJS)
 
 ifeq ($(TARGET),$(filter $(TARGET),c64 c128))
 joy.o:
@@ -34,30 +34,26 @@ endif
 
 install: all
 ifeq ($(TARGET),$(filter $(TARGET),c64 c128))
-	c1541 -attach $(DISK) -delete $(call lc,$(NAME))
-	c1541 -attach $(DISK) -write $(NAME).PRG $(call lc,$(NAME))
-	c1541 -attach $(DISK) -write HIGHSCORE $(call lc,HIGHSCORE)
-else
-	mcopy -Do -DO $(NAME).PRG $(PREFIX);
-	mcopy -Do -DO HIGHSCORE $(PREFIX);
-endif
-
-install-boards: install
-ifeq ($(TARGET),$(filter $(TARGET),c64 c128))
+	c1541 -attach $(DISK) -delete $(NAME)
+	c1541 -attach $(DISK) -write $(NAME) $(NAME)
+	c1541 -attach $(DISK) -write highscore
 	for board in $(ALL_BOARDS); do \
-		c1541 -attach $(DISK) -write $$board $$(basename $${board,,},s); \
+		c1541 -attach $(DISK) -write $${board} $$(basename $${board%.gb},s); \
 	done;
 else
+	mcopy -Do -DO $(NAME) $(PREFIX)/$(call uc,$(NAME)).PRG;
+	mcopy -Do -DO highscore $(PREFIX)/HIGHSCORE;
 	for board in $(ALL_BOARDS); do \
-		mcopy -Do -DO $$board $(PREFIX); \
+		xboard=$${board%.gb}; \
+		mcopy -Do -DO $${board} $(PREFIX)/$$(basename $${xboard^^}); \
 	done;
 endif
 
-run: install-boards
+run:
 ifeq ($(TARGET),c64)
-	x64sc $(DISK)
+	x64sc $(DISK)-$(TARGET)
 else ifeq ($(TARGET),c128)
-	x128 $(DISK)
+	x128 $(DISK)-$(TARGET)
 else
 	$(X16) -scale 2 -sdcard $(DISK) -bas runner
 endif
@@ -67,5 +63,5 @@ clean:
 
 ifeq ($(TARGET),$(filter $(TARGET),c64 c128))
 newdisk:
-	c1541 -format "$(call lc,$(NAME)),64" d64 $(DISK)
+	c1541 -format "$(NAME)-$(TARGET),64" d64 $(DISK)
 endif

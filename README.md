@@ -2,7 +2,8 @@
 
 # GridGame
 
-A game for the [Commander X-16](https://www.commanderx16.com) and Commdore 64.
+A game for the [Commander X-16](https://www.commanderx16.com),
+Commdore 64 and 128.
 
 A 'C' implementation of a Flash game I used to play a lot of back in the
 days of Flash games.
@@ -22,7 +23,7 @@ embedded ActionScript of the original SWF game.
 
 ## Gameplay:
 
-For the C-64 version, use a joystick plugged into port 2, for
+For the C-64 and 128 versions, use a joystick plugged into port 2, for
 the X-16, use the mouse.
 
 Mostly just like the original, click on a piece to make it rotate,
@@ -30,40 +31,41 @@ if one of its two edges touches the edges of another piece, that
 piece rotates, etc.  The goal is to trigger a long chain reaction of
 rotations.
 
-## Board editing, saving, and loading
-![gridedit](gridedit.png)
+## 'RESET' button
 
-New feature in v0.9.5
+Gives you a new random board.
 
-'REPLAY' button - lets you replay the board, resets the board to the
-last time the board was 'RESET', or any 'EDIT' actions taken.  Now you
-can see if you can find a better starting point from the same board.
-Great for two-players, should you find someone willing to play against.
-;-)
+## 'REPLAY' button 
 
-New feature in v0.9.1
+This lets you replay the board, resets the board to the last time the
+board was 'RESET', or any 'EDIT' actions taken.  Now you can see if
+you can find a better starting point from the same board.  Great for
+two-players, should you find someone willing to play against. ;-)
 
-The 'RESET' button on the HIGH SCORE now resets the HIGH SCORE to
-'0'.
-
-New feature in v0.9.
-
+## 'EDIT' button
 Click on the 'EDIT' button and you can edit the board.  
 
 Congratulations, you are now in the most frustrating and feature limited
 PETSCII drawing program ever.
 
-The boarder changes to '\*' from the line-drawing characters.  You can
+The border changes to '\*' from the line-drawing characters.  You can
 now click on a piece to rotate it without triggering a chain reaction.
 If you click on one of the '\*' on the boarder, it will change the
 entire row or column to match the adjacent piece.
 
-When you 'SAVE' a board, it will *not* check for a previous file,
+When you 'SAVE' a board, it will ***not*** check for a previous file,
 it will silently overwrite it.  Similarly, attempting to 'LOAD' a
 non-existent board will silently not load a board and return you to the
-editor.
+editor.  
+
+**N.B.** This includes the `gridgame` binary itself.  Yeah, I need to
+fix that.
+
+The 'RESET' button on the left will reset the highscore to '0'.
 
 Click on 'DONE' to play the board.
+
+![gridedit](gridedit.png)
 
 ## Why?
 
@@ -90,29 +92,36 @@ it compile if you use a potentially older version of the compiler suite.
 Edit the `Makefile` and fix the paths to the various binaries and
 destinations at the top.
 
-A simple `make` should give you a `GRIDGAME` that you can now load up on
+A simple `make` should give you a `gridgame` that you can now load up on
 an X-16.
 
-Running `make TARGET=c64` will produce a C-64 version.
+Running `make TARGET=c64` will produce a C-64 version.  
+Running `make TARGET=c128` will produce a C-128 version.
 
 With a little prep-work, the `Makefile` will 'install' to your sdcard
-(or a .d64 for the C-64 target) for you (location is easily configurable
-in the `Makefile`).  There is also a `run` target that will do the full
-build/install/run cycle.
+(or a .d64 for the C-64/C-128 targets) for you (location is easily
+configurable in the `Makefile`).  
 
-To get this to work you will need a suitable sdcard image
-file.  Either use the one provided with the emulator archive,
+For the X-16, to get this to work you will need a suitable sdcard
+image file.  Either use the one provided with the emulator archive,
 or make a new one.  If you're on a Linux box, check out the
 [script](https://github.com/mparson/mkcard) I wrote for making new
 images.  It also has instructions for setting up a `~/.mtoolsrc` file so
 the `make install` will work.  You might also need to edit the `runner`
 script if you've changed where on the sdcard you install the game.
 
-For C-64 users, there is a `newdisk` target that will make a .d64
-file for you and `make TARGET=c64 install` will copy the game into that
-.d64.
+For `c64` and `c128` TARGETs, there is a `newdisk` `make` rule that will
+make a .d64 file for you and `make TARGET=(c64|c128) install` will copy
+the game and sample [boards](boards/README.md) into the appropriate .d64
+file for you.
+
+For all TARGETs, you can `make TARGET=<target> run` after the `make install` and it will launch
+the approprite emulator and start the game for you.
 
 ## Changelog:
+
+v0.9.2  
+ - C-64 and C-128 versions
 
 v0.9.1 - Bug fix
  - 'RESET' button under the HIGH SCORE now resets the high score to '0'  
@@ -134,3 +143,14 @@ v0.5 - Initial release of playable game.
   basic game working.
 - See if it will compile with [KickC](https://gitlab.com/camelot/kickc),
   then all dev work could even be done on the system it is played on!
+
+---
+I would like to extend special thanks to both the developers of cc65 as
+well as the community on the cc65-devel mailing list for both providing
+the compiler as well as helping me out with some learning curves along
+the way.
+
+I would also like to thank David Murry (AKA [The 8-Bit
+Guy](http://www.the8bitguy.com/)) and the rest of the people behind the
+Commander X-16 project, without whom I probably would not have started
+back down this path of 8-bit joy.
