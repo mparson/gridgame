@@ -51,9 +51,9 @@ endif
 
 run:
 ifeq ($(TARGET),c64)
-	x64sc $(DISK)-$(TARGET)
+	x64sc $(DISK)
 else ifeq ($(TARGET),c128)
-	x128 $(DISK)-$(TARGET)
+	x128 $(DISK)
 else
 	$(X16) -scale 2 -sdcard $(DISK) -bas runner
 endif
