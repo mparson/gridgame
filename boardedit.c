@@ -72,7 +72,7 @@ void saveboard () {
 	cputsxy (0,18,"filename? ");
 	scanf ("%s",&filename);
 
-	if (strcmp (filename,(unsigned char*) "highscore")) {
+	if (strcmp (filename,(const char*) "highscore")) {
 
 		gotoxy (0,19);
 		cprintf ("saving board: %s",filename);

@@ -19,8 +19,8 @@ char board[16][16];
 bool sb;
 
 void loadhs () {
-	loadfile ("highscore",6);  // high scores are max 6 chars long.
-	global_hscore = atoi (fbuf);
+	loadfile ((unsigned char*) "highscore",6);  // high scores are max 6 chars long.
+	global_hscore = atoi ((const char*) fbuf);
 }
 
 void savehs () {
@@ -29,11 +29,11 @@ void savehs () {
 	}
 
 	if (global_nhs == true) {
-		itoa (global_hscore,fbuf,10);
-		while (strlen (fbuf) < 6) {
-			prepend (fbuf,"0");
+		itoa (global_hscore,(char*) fbuf,10);
+		while (strlen ((const char*) fbuf) < 6) {
+			prepend ((char*) fbuf,"0");
 		}
-		savefile ("highscore",strlen(fbuf));
+		savefile ((unsigned char*) "highscore",strlen((const char*) fbuf));
 		global_nhs = false;
 	}
 }
@@ -42,10 +42,10 @@ void savehs () {
 void loadfile (unsigned char filename[], unsigned char fsize) {
 	unsigned char x,y;
 
-	strcpy (tmpname,filename);
-	strcat (tmpname,",s,r");
+	strcpy ((char*) tmpname,(const char*) filename);
+	strcat ((char*) tmpname,",s,r");
 
-	cbm_open (2,8,2,tmpname);
+	cbm_open (2,8,2,(const char*) tmpname);
 
 	if (sb) {
 		for (y = 0; y <= 15; ++y) {
@@ -82,23 +82,23 @@ void append (char* s,char c) {
 void savefile (unsigned char filename[], unsigned int fsize) {
 	unsigned char x,y;
 
-	strcpy (tmpname,"s0:");
-	strcat (tmpname,filename);
-	strcat (tmpname,",s");
+	strcpy ((char*) tmpname,"s0:");
+	strcat ((char*) tmpname,(const char*) filename);
+	strcat ((char*) tmpname,",s");
 
-	cbm_open (2,8,15,tmpname);
+	cbm_open (2,8,15,(const char*) tmpname);
 	cbm_close (2);
 
-	strcpy (tmpname,filename);
-	strcat (tmpname,",s,w");
-	cbm_open (2,8,2,tmpname);
+	strcpy ((char*) tmpname,(const char*) filename);
+	strcat ((char*) tmpname,",s,w");
+	cbm_open (2,8,2,(char*) tmpname);
 
 	if (sb) {
 		getboard ();
 		for (y = 0; y <= 15; ++y) {
 			fbuf[0] = '\0';
 			for (x = 0; x <= 15; ++x) {
-				append (fbuf,board[x][y]);
+				append ((char*) fbuf,board[x][y]);
 			}
 
 			cbm_write (2,fbuf,16); // only write 16 chars

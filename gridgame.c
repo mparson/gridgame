@@ -47,12 +47,11 @@ int main () {
 	#endif
 	unsigned char c,mx,my;
 
-	Queue *Q = createQueue (63);
+	Queue *Q = createQueue (64);
 
 	clrscr ();
 	// kick us back into upper-case/PETSCII mode
-	__asm__ ("lda #$8E");
-	__asm__ ("jsr $FFD2");
+	cbm_k_bsout (CH_FONT_UPPER);
 
 	#if defined (__C64__) || defined (__C128__)
 	textcolor (COLOR_WHITE);
