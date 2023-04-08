@@ -1,5 +1,10 @@
 #include <conio.h>
 #include <stdbool.h>
+#include <stdlib.h>
+
+#ifdef MOUSEC
+#include <mouse.h>
+#endif
 
 #include "button.h"
 #include "global.h"
@@ -64,5 +69,22 @@ void mbutton (unsigned char mx, unsigned char my) {
 		global_score = 0;
 		global_newrandboard = false;
 		updateboard ();
+	}
+	// clicked on the 'quit' button
+	else if ((mx >= 1 && mx <= 6) && (my >= 12 && my <= 14)) {
+		if (global_nhs) {
+			cputsxy (2,16,"new hs");
+			cputsxy (2,17,"saving");
+			savehs (); 
+			cclearxy (2,16,6); // clear the 'new hs' text.
+			cclearxy (2,17,6); // clear the 'saving' text.
+		}
+		#ifdef MOUSEC
+		mouse_hide ();
+		mouse_uninstall ();
+		mouse_unload ();
+		#endif
+		clrscr ();
+		exit (0);
 	}
 }

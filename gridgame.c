@@ -1,5 +1,5 @@
 /*
- The code for this game is Copyright ©2021, Michael Parson
+ The code for this game is Copyright ©2023, Michael Parson
  <mparson@bl.org>.
 
  This game is free software; you can redistribute it and/or modify it
@@ -23,12 +23,12 @@
 #include <string.h>
 #include <stdbool.h>
 
-#ifdef __CX16__
+#ifdef MOUSEC
 #include <mouse.h>
 bool global_b;
 #endif
 
-#if defined (__C64__) || defined (__C128__)
+#ifdef JOYC
 #include <joystick.h>
 #include "c64/joy.h"
 #endif
@@ -41,7 +41,7 @@ bool global_b;
 #include "queue.h"
 
 int main () {
-	#ifdef __CX16__
+	#ifdef MOUSEC
 	struct mouse_info info;
 	unsigned char mbl;
 	#endif
@@ -53,20 +53,23 @@ int main () {
 	// kick us back into upper-case/PETSCII mode
 	cbm_k_bsout (CH_FONT_UPPER);
 
-	#if defined (__C64__) || defined (__C128__)
 	textcolor (COLOR_WHITE);
 	bordercolor (COLOR_BLUE);
 	bgcolor (COLOR_BLUE);
+
+	#if defined JOYC
 	joy_install (joy_static_stddrv);
 	#endif
 
-	// only use mouse on the X-16 (save memory for the C-64 version)
 	#ifdef __CX16__
 	videomode (0);
+	setupchars ();
+	#endif
+
+	#ifdef MOUSEC
 	mouse_load_driver (&mouse_def_callbacks, mouse_stddrv);
 	mouse_install (&mouse_def_callbacks,mouse_static_stddrv);
 	mouse_show ();
-	setupchars ();
 	#endif
 
 	_randomize ();
@@ -79,7 +82,7 @@ int main () {
 	updateboard ();
 
 	while (1) {
-		#ifdef __CX16__
+		#ifdef MOUSEC
 		mbl = 0;
 		mouse_info (&info);
 		mbl = (info.buttons & MOUSE_BTN_LEFT);
@@ -90,7 +93,7 @@ int main () {
 		}
 		#endif
 
-		#if defined (__C64__) || defined (__C128__)
+		#if defined JOYC
 		joyinfo ();
 
 		mx = (unsigned char) jx;
@@ -111,21 +114,16 @@ int main () {
 				cputcxy (mx,my,c);
 				textcolor (COLOR_WHITE);
 				Enqueue (Q,mx,my);
+				#ifdef MOUSEC
+				mouse_hide ();
+                #endif
 				processQ (Q);
+				#ifdef MOUSEC
+				mouse_show ();
+                #endif
 			} else {
 				mbutton (mx,my);
 			}
-		}
-		if (global_nhs) {
-			#ifndef __CX16__
-			cputsxy (2,16,"new hs");
-			cputsxy (2,17,"saving");
-			#endif
-			savehs ();
-			#ifndef __CX16__
-			cclearxy (2,16,6); // clear the 'new hs' text.
-			cclearxy (2,17,6); // clear the 'saving' text.
-			#endif
 		}
 
 		global_b = false;

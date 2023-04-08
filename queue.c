@@ -11,16 +11,20 @@ unsigned char dirtable[4][2] = {
 };
 
 #ifdef __CX16__
+// Using custom chars on the CX-16 is much easier than on the C-64
+// or C-128, you don't have to copy the chargen bits to ram, reset
+// everything to point at the new locations, etc.  Just vpoke away.
+
 // these numbers are the screen display codes
 // corresponding PETSCII codes are 100-103
 unsigned char newchars[8] = { 68,69,70,71 };
 
 // circle halfs
 unsigned char ch[4][8] = {
-	{ 0,0,0,60,126,231,195,195 },   // top
+	{ 0,0,0,60,126,231,195,195 },    // top
 	{ 224,240,56,24,24,56,240,224 }, // right
-	{ 195,195,231,126,60,0,0,0 },   // bottom
-	{ 7,15,28,24,24,28,15,7 }      // left
+	{ 195,195,231,126,60,0,0,0 },    // bottom
+	{ 7,15,28,24,24,28,15,7 }        // left
 };
 
 void setupchars () {
@@ -148,12 +152,12 @@ void check (Queue *Q, unsigned char cx, unsigned char cy, unsigned char dir) {
 
 void processQ (Queue *Q) {
 	static unsigned char c,nc,hc;
-	static unsigned char mx,my;
+	static unsigned char mx,my,vs;
 
 	while ((unsigned char) Q->size != 0) {
 		mx = (unsigned char) Q->qx[Q->front];
 		my = (unsigned char) Q->qy[Q->front];
-
+		
 		gotoxy (mx,my);
 
 		c = cpeekc ();
@@ -187,13 +191,16 @@ void processQ (Queue *Q) {
 
 		textcolor (COLOR_WHITE);
 		#ifdef __CX16__
-		cputcxy (mx,my,hc);
+		cputcxy (mx,my,hc); // draws the custom half-circle 
 		#endif
-		vsyncw (3);
+
+		// speed processing up as the queue grows
+		vs = (15*(Q->size-25))/-100;
+
 		cputcxy (mx,my,nc);
+		vsyncw (vs);
 
 		Deqeue (Q);
 
-		//vsyncw (1);
 	}
 }

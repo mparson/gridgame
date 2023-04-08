@@ -12,7 +12,7 @@ unsigned int global_score;
 unsigned int global_hscore;
 
 unsigned char filename[16]; // 16 char filename limit in C= DOS
-unsigned char tmpname[20];  // +3 for "S0:" and +4 for ",s,[rw]"
+//unsigned char tmpname[20];  // +3 for "S0:" and +4 for ",s,[rw]"
 unsigned char fbuf[20]; // should only need 16, but this gives us some breathing room.
 
 char board[16][16];
@@ -24,15 +24,19 @@ void loadhs () {
 }
 
 void savehs () {
+	//static char fbuf[7]; // '0' padded highstore as ASCII string, 6 digits + NULL
+
 	if (global_editmode) {
 		updatescore ();
 	}
 
 	if (global_nhs == true) {
-		itoa (global_hscore,(char*) fbuf,10);
-		while (strlen ((const char*) fbuf) < 6) {
-			prepend ((char*) fbuf,"0");
+		itoa (global_hscore,(char *) fbuf,10);
+		/*
+		while (strlen ((const char *) fbuf) < 6) {
+			prepend ((char *) fbuf,"0");
 		}
+		*/
 		savefile ((unsigned char*) "highscore",strlen((const char*) fbuf));
 		global_nhs = false;
 	}
@@ -40,6 +44,7 @@ void savehs () {
 
 // TODO: handle non-existing file for board loading
 void loadfile (unsigned char filename[], unsigned char fsize) {
+	unsigned char tmpname[20];  // +3 for "S0:" and +4 for ",s,[rw]"
 	unsigned char x,y;
 
 	strcpy ((char*) tmpname,(const char*) filename);
@@ -80,8 +85,10 @@ void append (char* s,char c) {
 
 // TODO: handle existing file for board saving
 void savefile (unsigned char filename[], unsigned int fsize) {
+	unsigned char tmpname[20];  // +3 for "S0:" and +4 for ",s,[rw]"
 	unsigned char x,y;
 
+	// Erase the existing file
 	strcpy ((char*) tmpname,"s0:");
 	strcat ((char*) tmpname,(const char*) filename);
 	strcat ((char*) tmpname,",s");
@@ -89,6 +96,8 @@ void savefile (unsigned char filename[], unsigned int fsize) {
 	cbm_open (2,8,15,(const char*) tmpname);
 	cbm_close (2);
 
+	// Write the new file
+	memset(tmpname, 0,20); // empty out tmpname
 	strcpy ((char*) tmpname,(const char*) filename);
 	strcat ((char*) tmpname,",s,w");
 	cbm_open (2,8,2,(char*) tmpname);

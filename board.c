@@ -140,6 +140,7 @@ void updateboard () {
 	if (global_editmode) {
 		cboxclear (31,5,37,7);      // erase 'reset' button
 		cboxclear (0,18,39,24);     // erase the bottom of screen
+		cboxclear (1,12,6,14);		// erase the quit button
 		cboxclear (29,11,39,17);    // erase everything below the 'edit' button.
 		drawbutton (31,8," done");  // want 'reset' and 'done' buttons to be same size
 		drawbutton (31,11," load"); // load new board
@@ -156,6 +157,7 @@ void updateboard () {
 		drawbutton (31,5,"reset");  // generate new random board
 		drawbutton (31,8," edit");  // edit board
 		drawbutton (30,15,"replay");// play original board again
+		drawbutton (1,12,"quit"); 	// quit the game
 
 		cboxclear (0,18,39,24);     // erase the bottom of screen
 		gotoxy (0,19);

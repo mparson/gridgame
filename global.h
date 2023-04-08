@@ -1,7 +1,7 @@
 #ifndef GLOBAL_H
 #define GLOBAL_H
 
-#include <stdbool.h>;
+#include <stdbool.h>
 
 #define LX  12	// low 'x' val (left side of playfield)
 #define HX  27	// high 'x' val (right side of playfield)
@@ -17,11 +17,11 @@
 extern unsigned int global_hscore;
 extern unsigned int global_score;
 //extern bool global_overwrite;
-extern bool global_nhs;
-extern bool global_editmode;
-extern bool global_newrandboard;
-extern bool global_b;
+extern bool global_nhs;					// new high score is set
+extern bool global_editmode;			// we're in edit mode
+extern bool global_newrandboard;		// we want a new random board
+extern bool global_b;					// mouse/joy button pressed
 
-extern void vsyncw (unsigned char c);
+extern void vsyncw (unsigned char c);	// Number of frames to wait before doing stuff
 
 #endif
