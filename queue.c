@@ -2,6 +2,7 @@
 
 #include "global.h"
 #include "queue.h"
+#include "sid_sfx.h"
 
 unsigned char dirtable[4][2] = {
 	{ 117 , 106 },
@@ -200,6 +201,8 @@ void processQ (Queue *Q) {
 		cputcxy (mx,my,nc);
 		vsyncw (vs);
 
+		sid_waterdrop();
+		sid_tick();
 		Deqeue (Q);
 
 	}

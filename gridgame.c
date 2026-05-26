@@ -39,6 +39,7 @@ bool global_b;
 #include "draw.h"
 #include "board.h"
 #include "queue.h"
+#include "sid_sfx.h"
 
 int main () {
 	#ifdef MOUSEC
@@ -50,6 +51,7 @@ int main () {
 	Queue *Q = createQueue (64);
 
 	clrscr ();
+	sid_sfx_init();
 	// kick us back into upper-case/PETSCII mode
 	cbm_k_bsout (CH_FONT_UPPER);
 
@@ -101,6 +103,7 @@ int main () {
 		#endif
 
 		vsyncw (5);
+		sid_tick();
 
 		// check for clicks on gameboard
 		if (global_b) {
